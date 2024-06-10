@@ -1,67 +1,90 @@
 package org.cashify.cashifyupdate2;
 
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class LoginController {
     @FXML
-    private TextField usernameField;
+    private TextField si_email;
     @FXML
-    private PasswordField passwordField;
+    private PasswordField si_password;
     @FXML
-    private Button loginButton;
+    private Button si_loginBtn;
 
-    private LoginService loginService;
+    private Connection connect;
+    private PreparedStatement prepare;
+    private ResultSet result;
 
-    public void setLoginService(LoginService loginService) {
-        this.loginService = loginService;
-    }
 
-    public void initialize() {
-        loginButton.setOnAction(event -> handleLogin());
-    }
+    private Alert alert;
 
-    private void handleLogin() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
+    public void loginBtn() {
 
-        User user = loginService.login(username, password);
-        if (user != null) {
-            openDashboard(user);
+        if (si_email.getText().isEmpty() || si_password.getText().isEmpty()) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Incorrect Username/Password");
+            alert.showAndWait();
         } else {
-            showError("Invalid login credentials.");
+
+            String selctData = "SELECT email, password FROM users WHERE email = ? and password = ?";
+
+            connect = database.connectDB();
+
+            try {
+
+                prepare = connect.prepareStatement(selctData);
+                prepare.setString(1, si_email.getText());
+                prepare.setString(2, si_password.getText());
+
+                result = prepare.executeQuery();
+                // IF SUCCESSFULLY LOGIN, THEN PROCEED TO ANOTHER FORM WHICH IS OUR MAIN FORM
+                if (result.next()) {
+                    // TO GET THE USERNAME THAT USER USED
+                    data.email = si_email.getText();
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Login!");
+                    alert.showAndWait();
+
+                    // LINK YOUR MAIN FORM
+                    Parent root = FXMLLoader.load(getClass().getResource("Dashboard-AdminGUI.fxml"));
+                    Stage stage = new Stage();
+                    Scene scene = new Scene(root);
+
+                    stage.setTitle("Cafe Shop Management System");
+                    stage.setMinWidth(1100);
+                    stage.setMinHeight(600);
+
+                    stage.setScene(scene);
+                    stage.show();
+
+                    si_loginBtn.getScene().getWindow().hide();
+
+                } else { // IF NOT, THEN THE ERROR MESSAGE WILL APPEAR
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Incorrect Username/Password");
+                    alert.showAndWait();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-    }
-
-    private void openDashboard(User user) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Dashboard");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            // Close the login window
-            Stage loginStage = (Stage) loginButton.getScene().getWindow();
-            loginStage.close();
-
-            DashboardController controller = loader.getController();
-            controller.initialize(user);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

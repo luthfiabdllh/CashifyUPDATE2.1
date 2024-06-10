@@ -16,8 +16,6 @@ public class LoginApp extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
             Parent root = loader.load();
-            LoginController controller = loader.getController();
-            controller.setLoginService(loginService);
 
             Scene scene = new Scene(root);
             primaryStage.setTitle("Login");
