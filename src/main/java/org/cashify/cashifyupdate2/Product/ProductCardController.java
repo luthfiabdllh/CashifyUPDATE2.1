@@ -7,6 +7,10 @@ import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 public class ProductCardController {
 
     @FXML
@@ -31,6 +35,11 @@ public class ProductCardController {
     private Label productStock;
 
     private ProductData productData;
+
+    private Connection connect;
+    private PreparedStatement prepare;
+    private ResultSet result;
+
 
     public void setProductData(ProductData productData) {
         this.productData = productData;
