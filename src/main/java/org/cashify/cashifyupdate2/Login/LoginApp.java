@@ -1,10 +1,11 @@
-package org.cashify.cashifyupdate2;
+package org.cashify.cashifyupdate2.Login;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.cashify.cashifyupdate2.LoginService;
 
 public class LoginApp extends Application {
     private LoginService loginService;

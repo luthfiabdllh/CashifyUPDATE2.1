@@ -1,4 +1,4 @@
-package org.cashify.cashifyupdate2;
+package org.cashify.cashifyupdate2.Database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

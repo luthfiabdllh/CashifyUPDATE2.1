@@ -1,4 +1,4 @@
-package org.cashify.cashifyupdate2;
+package org.cashify.cashifyupdate2.Login;
 
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -9,6 +9,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
+import org.cashify.cashifyupdate2.Database.DatabaseConnection;
+import org.cashify.cashifyupdate2.Database.data;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

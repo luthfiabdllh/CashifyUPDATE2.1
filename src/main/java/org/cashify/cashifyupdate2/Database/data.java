@@ -1,4 +1,4 @@
-package org.cashify.cashifyupdate2;
+package org.cashify.cashifyupdate2.Database;
 
 public class data {
     public static String username;
