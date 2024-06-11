@@ -11,7 +11,7 @@ public class DatabaseConnection {
             // Memuat driver JDBC untuk MySQL
             Class.forName("com.mysql.cj.jdbc.Driver");
             // Membuat koneksi ke database MySQL
-            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/cashier", "root", "");
+            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/cashify", "root", "");
         } catch (Exception ex) {
             System.out.println(ex);
         }

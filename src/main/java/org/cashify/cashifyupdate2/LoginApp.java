@@ -14,7 +14,8 @@ public class LoginApp extends Application {
         loginService = new LoginService();
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Login.fxml"));
+
             Parent root = loader.load();
 
             Scene scene = new Scene(root);

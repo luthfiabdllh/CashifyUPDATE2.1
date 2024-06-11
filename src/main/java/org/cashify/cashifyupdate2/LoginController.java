@@ -41,7 +41,7 @@ public class LoginController {
 
             String selctData = "SELECT username, password FROM users WHERE username = ? and password = ?";
 
-            connect = database.connectDB();
+            connect = DatabaseConnection.getCon();
 
             try {
 

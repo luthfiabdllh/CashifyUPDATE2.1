@@ -48,5 +48,4 @@ public class DashboardController {
         LoginApp.main(new String[]{});
     }
 
-    // Add more methods for other actions
 }

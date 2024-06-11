@@ -14,4 +14,6 @@ module org.cashify.cashifyupdate2 {
 
     opens org.cashify.cashifyupdate2 to javafx.fxml;
     exports org.cashify.cashifyupdate2;
+    exports org.cashify.cashifyupdate2.Product;
+    opens org.cashify.cashifyupdate2.Product to javafx.fxml;
 }
