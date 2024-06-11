@@ -53,7 +53,7 @@ public class LoginController {
                 // IF SUCCESSFULLY LOGIN, THEN PROCEED TO ANOTHER FORM WHICH IS OUR MAIN FORM
                 if (result.next()) {
                     // TO GET THE USERNAME THAT USER USED
-                    data.email = si_username.getText();
+                    data.username = si_username.getText();
 
                     alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Information Message");
