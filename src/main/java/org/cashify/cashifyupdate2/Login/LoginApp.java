@@ -11,7 +11,6 @@ public class LoginApp extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Login.fxml"));
 
