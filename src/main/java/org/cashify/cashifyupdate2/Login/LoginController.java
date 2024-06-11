@@ -16,7 +16,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-
 public class LoginController {
     @FXML
     private TextField si_username;
@@ -29,11 +28,9 @@ public class LoginController {
     private PreparedStatement prepare;
     private ResultSet result;
 
-
     private Alert alert;
 
     public void loginBtn() {
-
         if (si_username.getText().isEmpty() || si_password.getText().isEmpty()) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
@@ -41,21 +38,17 @@ public class LoginController {
             alert.setContentText("Incorrect Username/Password");
             alert.showAndWait();
         } else {
-
-            String selctData = "SELECT username, password FROM users WHERE username = ? and password = ?";
-
+            String selectData = "SELECT username, password FROM users WHERE username = ? and password = ?";
             connect = DatabaseConnection.getCon();
 
             try {
-
-                prepare = connect.prepareStatement(selctData);
+                prepare = connect.prepareStatement(selectData);
                 prepare.setString(1, si_username.getText());
                 prepare.setString(2, si_password.getText());
 
                 result = prepare.executeQuery();
-                // IF SUCCESSFULLY LOGIN, THEN PROCEED TO ANOTHER FORM WHICH IS OUR MAIN FORM
+
                 if (result.next()) {
-                    // TO GET THE USERNAME THAT USER USED
                     data.username = si_username.getText();
 
                     alert = new Alert(Alert.AlertType.INFORMATION);
@@ -64,21 +57,22 @@ public class LoginController {
                     alert.setContentText("Successfully Login!");
                     alert.showAndWait();
 
-                    // LINK YOUR MAIN FORM
-                    Parent root = FXMLLoader.load(getClass().getResource("Dashboard-AdminGUI.fxml"));
+                    // Load the main form
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Dashboard-AdminGUI.fxml"));
+                    Parent root = loader.load();
                     Stage stage = new Stage();
                     Scene scene = new Scene(root);
 
                     stage.setTitle("Cafe Shop Management System");
                     stage.setMinWidth(1100);
                     stage.setMinHeight(600);
-
                     stage.setScene(scene);
                     stage.show();
 
+                    // Hide the current login window
                     si_loginBtn.getScene().getWindow().hide();
 
-                } else { // IF NOT, THEN THE ERROR MESSAGE WILL APPEAR
+                } else {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText(null);
@@ -90,5 +84,26 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
+        try {
+            System.out.println(getClass().getResource("/org/cashify/cashifyupdate2/Dashboard/Dashboard-AdminGUI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Dashboard/Dashboard-AdminGUI.fxml"));
+            Parent root = loader.load();
+            System.out.println("FXML Loaded Successfully");
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+
+            stage.setTitle("Cafe Shop Management System");
+            stage.setMinWidth(1100);
+            stage.setMinHeight(600);
+            stage.setScene(scene);
+            stage.show();
+
+            // Hide the current login window
+            si_loginBtn.getScene().getWindow().hide();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
+
 }

@@ -1,10 +1,12 @@
-package org.cashify.cashifyupdate2.Login;
+package org.cashify.cashifyupdate2.Dasboard;
+
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import org.cashify.cashifyupdate2.Login.LoginApp;
 
 public class DashboardController {
     @FXML
@@ -30,12 +32,6 @@ public class DashboardController {
     @FXML
     private TextField amountField;
 
-    private     User currentUser;
-
-    public void initialize(User user) {
-        this.currentUser = user;
-        setupActions();
-    }
 
     private void setupActions() {
         logoutButton.setOnAction(event -> handleLogout());
@@ -48,4 +44,5 @@ public class DashboardController {
         LoginApp.main(new String[]{});
     }
 
+    // Add more methods for other actions
 }

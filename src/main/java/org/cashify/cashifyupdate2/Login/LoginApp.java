@@ -7,11 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class LoginApp extends Application {
-    private LoginService loginService;
 
     @Override
     public void start(Stage primaryStage) {
-        loginService = new LoginService();
+
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Login.fxml"));
