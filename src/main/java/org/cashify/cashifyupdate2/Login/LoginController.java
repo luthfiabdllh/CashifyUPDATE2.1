@@ -84,25 +84,6 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
-        try {
-            System.out.println(getClass().getResource("/org/cashify/cashifyupdate2/Dashboard/Dashboard-AdminGUI.fxml"));
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Dashboard/Dashboard-AdminGUI.fxml"));
-            Parent root = loader.load();
-            System.out.println("FXML Loaded Successfully");
-            Stage stage = new Stage();
-            Scene scene = new Scene(root);
-
-            stage.setTitle("Cafe Shop Management System");
-            stage.setMinWidth(1100);
-            stage.setMinHeight(600);
-            stage.setScene(scene);
-            stage.show();
-
-            // Hide the current login window
-            si_loginBtn.getScene().getWindow().hide();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 
