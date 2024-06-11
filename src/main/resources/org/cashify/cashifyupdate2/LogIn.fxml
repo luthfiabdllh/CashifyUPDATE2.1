@@ -18,9 +18,9 @@
                   <Image url="@Assets/logo-text.png" />
                </image>
             </ImageView>
-            <TextField fx:id="si_email" layoutX="32.0" layoutY="185.0" prefHeight="40.0" prefWidth="283.0" promptText="Email" styleClass="field" />
-            <PasswordField fx:id="si_password" layoutX="32.0" layoutY="239.0" prefHeight="40.0" prefWidth="283.0" promptText="Password" styleClass="field" />
-            <Button fx:id="si_loginBtn" layoutX="32.0" layoutY="328.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="283.0" styleClass="btn-primary" text="Login">
+            <TextField fx:id="si_username" onAction="#loginBtn" layoutX="32.0" layoutY="185.0" prefHeight="40.0" prefWidth="283.0" promptText="Username" styleClass="field" />
+            <PasswordField fx:id="si_password" onAction="#loginBtn" layoutX="32.0" layoutY="239.0" prefHeight="40.0" prefWidth="283.0" promptText="Password" styleClass="field" />
+            <Button fx:id="si_loginBtn" onAction="#loginBtn" layoutX="32.0" layoutY="328.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="283.0" styleClass="btn-primary" text="Login">
                <font>
                   <Font name="Montserrat-Bold" size="16.0" />
                </font></Button>

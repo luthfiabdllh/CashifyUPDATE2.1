@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 
 public class LoginController {
     @FXML
-    private TextField si_email;
+    private TextField si_username;
     @FXML
     private PasswordField si_password;
     @FXML
@@ -30,7 +30,7 @@ public class LoginController {
 
     public void loginBtn() {
 
-        if (si_email.getText().isEmpty() || si_password.getText().isEmpty()) {
+        if (si_username.getText().isEmpty() || si_password.getText().isEmpty()) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
@@ -38,21 +38,21 @@ public class LoginController {
             alert.showAndWait();
         } else {
 
-            String selctData = "SELECT email, password FROM users WHERE email = ? and password = ?";
+            String selctData = "SELECT username, password FROM users WHERE username = ? and password = ?";
 
             connect = database.connectDB();
 
             try {
 
                 prepare = connect.prepareStatement(selctData);
-                prepare.setString(1, si_email.getText());
+                prepare.setString(1, si_username.getText());
                 prepare.setString(2, si_password.getText());
 
                 result = prepare.executeQuery();
                 // IF SUCCESSFULLY LOGIN, THEN PROCEED TO ANOTHER FORM WHICH IS OUR MAIN FORM
                 if (result.next()) {
                     // TO GET THE USERNAME THAT USER USED
-                    data.email = si_email.getText();
+                    data.email = si_username.getText();
 
                     alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Information Message");
