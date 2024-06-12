@@ -1,62 +1,187 @@
 package org.cashify.cashifyupdate2.Product;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
-
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
+import java.util.ResourceBundle;
 
-public class ProductCardController {
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import org.cashify.cashifyupdate2.Database.DatabaseConnection;
+import org.cashify.cashifyupdate2.Database.data;
 
-    @FXML
-    private VBox productCard;
-
-    @FXML
-    private ImageView productImage;
-
-    @FXML
-    private Label productName;
-
-    @FXML
-    private Label productPrice;
-
-    @FXML
-    private Button addButton;
-
-    @FXML
-    private Spinner<Integer> quantitySpinner;
+public class ProductCardController implements Initializable {
 
     @FXML
-    private Label productStock;
+    private AnchorPane card_form;
 
-    private ProductData productData;
+    @FXML
+    private Label prod_name;
+
+    @FXML
+    private Label prod_price;
+
+    @FXML
+    private Label prod_extra_info;
+
+    @FXML
+    private ImageView prod_imageView;
+
+    @FXML
+    private Spinner<Integer> prod_spinner;
+
+    @FXML
+    private Button prod_addBtn;
+
+    private ProductData prodData;
+    private Image image;
+
+    private String prodID;
+    private String type;
+    private String prod_date;
+    private String prod_image;
+
+    private SpinnerValueFactory<Integer> spin;
 
     private Connection connect;
     private PreparedStatement prepare;
     private ResultSet result;
 
+    private Alert alert;
 
-    public void setProductData(ProductData productData) {
-        this.productData = productData;
-        updateCard();
+    public void setData(ProductData prodData) {
+        this.prodData = prodData;
+
+        if (prodData instanceof ClothingProduct) {
+            ClothingProduct clothingProduct = (ClothingProduct) prodData;
+            prod_extra_info.setText("Size: " + clothingProduct.getSize() + ", Color: " + clothingProduct.getColor());
+        } else if (prodData instanceof ElectronicProduct) {
+            ElectronicProduct electronicProduct = (ElectronicProduct) prodData;
+            prod_extra_info.setText("Warranty: " + electronicProduct.getWarranty());
+        } else if (prodData instanceof FoodProduct) {
+            FoodProduct foodProduct = (FoodProduct) prodData;
+            prod_extra_info.setText("Expires on: " + foodProduct.getExpirationDate());
+        }
+
+        prod_image = prodData.getImage();
+        prod_date = String.valueOf(prodData.getDate());
+        type = prodData.getType();
+        prodID = prodData.getProductId();
+        prod_name.setText(prodData.getProductName());
+        prod_price.setText("$" + String.valueOf(prodData.getPrice()));
+        String path = "File:" + prodData.getImage();
+        image = new Image(path, 190, 94, false, true);
+        prod_imageView.setImage(image);
+        pr = prodData.getPrice();
     }
 
-    private void updateCard() {
-        productName.setText(productData.getProductName());
-        productPrice.setText("Rp. " + productData.getPrice().toString());
-        productStock.setText(productData.getStock().toString());
-        // Set product image
-        // Example: productImage.setImage(new Image(productData.getImage()));
+    private int qty;
+
+    public void setQuantity() {
+        spin = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+        prod_spinner.setValueFactory(spin);
     }
 
-    @FXML
-    private void handleAddButton() {
-        int quantity = quantitySpinner.getValue();
-        // Handle the add button action, e.g., add to cart
+    private double totalP;
+    private double pr;
+
+    public void addBtn() {
+        qty = prod_spinner.getValue();
+        String check = "";
+        String checkAvailable = "SELECT status FROM product WHERE prod_id = '" + prodID + "'";
+
+        connect = DatabaseConnection.getCon();
+
+        try {
+            int checkStck = 0;
+            String checkStock = "SELECT stock FROM product WHERE prod_id = '" + prodID + "'";
+
+            prepare = connect.prepareStatement(checkStock);
+            result = prepare.executeQuery();
+
+            if (result.next()) {
+                checkStck = result.getInt("stock");
+            }
+
+            if (checkStck == 0) {
+                String updateStock = "UPDATE product SET prod_name = '" + prod_name.getText() + "', type = '" + type + "', stock = 0, price = " + pr + ", status = 'Unavailable', image = '" + prod_image + "', date = '" + prod_date + "' WHERE prod_id = '" + prodID + "'";
+                prepare = connect.prepareStatement(updateStock);
+                prepare.executeUpdate();
+            }
+
+            prepare = connect.prepareStatement(checkAvailable);
+            result = prepare.executeQuery();
+
+            if (result.next()) {
+                check = result.getString("status");
+            }
+
+            if (!check.equals("Available") || qty == 0) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Something Wrong :3");
+                alert.showAndWait();
+            } else {
+                if (checkStck < qty) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid. This product is Out of stock");
+                    alert.showAndWait();
+                } else {
+                    prod_image = prod_image.replace("\\", "\\\\");
+
+                    String insertData = "INSERT INTO customer (customer_id, prod_id, prod_name, type, quantity, price, date, image, em_username) VALUES (?,?,?,?,?,?,?,?,?)";
+                    prepare = connect.prepareStatement(insertData);
+                    prepare.setString(1, String.valueOf(data.cID));
+                    prepare.setString(2, prodID);
+                    prepare.setString(3, prod_name.getText());
+                    prepare.setString(4, type);
+                    prepare.setString(5, String.valueOf(qty));
+
+                    totalP = (qty * pr);
+                    prepare.setString(6, String.valueOf(totalP));
+
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                    prepare.setString(7, String.valueOf(sqlDate));
+
+                    prepare.setString(8, prod_image);
+                    prepare.setString(9, data.username);
+
+                    prepare.executeUpdate();
+
+                    int upStock = checkStck - qty;
+
+                    String updateStock = "UPDATE product SET prod_name = '" + prod_name.getText() + "', type = '" + type + "', stock = " + upStock + ", price = " + pr + ", status = '" + check + "', image = '" + prod_image + "', date = '" + prod_date + "' WHERE prod_id = '" + prodID + "'";
+                    prepare = connect.prepareStatement(updateStock);
+                    prepare.executeUpdate();
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Added!");
+                    alert.showAndWait();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setQuantity();
     }
 }
