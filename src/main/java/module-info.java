@@ -20,4 +20,8 @@ module org.cashify.cashifyupdate2 {
     opens org.cashify.cashifyupdate2.Database to javafx.fxml;
     exports org.cashify.cashifyupdate2.Login;
     opens org.cashify.cashifyupdate2.Login to javafx.fxml;
+    exports org.cashify.cashifyupdate2.SideController;
+    opens org.cashify.cashifyupdate2.SideController to javafx.fxml;
+    exports org.cashify.cashifyupdate2.ControllerAdmin;
+    opens org.cashify.cashifyupdate2.ControllerAdmin to javafx.fxml;
 }

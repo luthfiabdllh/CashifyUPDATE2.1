@@ -64,8 +64,8 @@ public class LoginController {
                     Scene scene = new Scene(root);
 
                     stage.setTitle("Cafe Shop Management System");
-                    stage.setMinWidth(1100);
-                    stage.setMinHeight(600);
+                    stage.setMinWidth(1280);
+                    stage.setMinHeight(720);
                     stage.setScene(scene);
                     stage.show();
 
