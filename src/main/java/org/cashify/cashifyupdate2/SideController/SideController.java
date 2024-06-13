@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.cashify.cashifyupdate2.ControllerAdmin.ReportController;
 
 import java.util.Optional;
 
@@ -25,7 +26,6 @@ public class SideController {
     private Button dashboardButton;
     @FXML
     private Button logoutButton;
-
 
     private Alert alert;
 

@@ -9,12 +9,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
-import org.cashify.cashifyupdate2.Database.DatabaseConnection;
 import org.cashify.cashifyupdate2.Database.data;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.io.IOException;
 
 public class LoginController {
     @FXML
@@ -23,10 +20,6 @@ public class LoginController {
     private PasswordField si_password;
     @FXML
     private Button si_loginBtn;
-
-    private Connection connect;
-    private PreparedStatement prepare;
-    private ResultSet result;
 
     private Alert alert;
 
@@ -38,17 +31,10 @@ public class LoginController {
             alert.setContentText("Incorrect Username/Password");
             alert.showAndWait();
         } else {
-            String selectData = "SELECT username, password FROM users WHERE username = ? and password = ?";
-            connect = DatabaseConnection.getCon();
-
+            LoginModel loginModel = new LoginModel(si_username.getText(), si_password.getText());
+            LoginDao loginDao = new LoginDao();
             try {
-                prepare = connect.prepareStatement(selectData);
-                prepare.setString(1, si_username.getText());
-                prepare.setString(2, si_password.getText());
-
-                result = prepare.executeQuery();
-
-                if (result.next()) {
+                if (loginDao.login(loginModel)) {
                     data.username = si_username.getText();
 
                     alert = new Alert(Alert.AlertType.INFORMATION);
@@ -79,9 +65,8 @@ public class LoginController {
                     alert.setContentText("Incorrect Username/Password");
                     alert.showAndWait();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 

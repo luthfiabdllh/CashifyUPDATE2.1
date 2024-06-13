@@ -40,7 +40,6 @@
                               </Button>
                               <AnchorPane layoutX="2.9000000953674316" layoutY="654.9000244140625" />
                               <Button fx:id="logoutButton" onAction="#logout" layoutX="16.0" layoutY="644.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="190.0" styleClass="btn-primary" text="Logout">
-
                               </Button>
                            </children>
                         </AnchorPane>
@@ -58,25 +57,25 @@
                                     <AnchorPane layoutX="1.0" layoutY="23.0" prefHeight="170.0" prefWidth="248.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                                        <children>
                                           <Label styleClass="heading2" text="Total Customer" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
-                                          <Label styleClass="heading3-black" text="0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
+                                          <Label fx:id="dashboard_NC" styleClass="heading3-black" text="0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="244.0" layoutY="10.4" prefHeight="170.0" prefWidth="248.0" AnchorPane.bottomAnchor="10.400000000000006" AnchorPane.topAnchor="10.4">
                                        <children>
                                           <Label layoutX="40.0" layoutY="20.0" styleClass="heading2" text="Product Sold" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="20.0" />
-                                          <Label layoutX="41.2" layoutY="60.0" styleClass="heading3-black" text="0" AnchorPane.leftAnchor="41.2" AnchorPane.topAnchor="60.0" />
+                                          <Label fx:id="dashboard_NSP" layoutX="41.2" layoutY="60.0" styleClass="heading3-black" text="0" AnchorPane.leftAnchor="41.2" AnchorPane.topAnchor="60.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="512.0" layoutY="10.4" prefHeight="170.0" prefWidth="248.0" AnchorPane.bottomAnchor="10.400000000000006" AnchorPane.topAnchor="10.4">
                                        <children>
                                           <Label styleClass="heading2" text="Daily Income" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
-                                          <Label layoutX="8.0" layoutY="40.0" styleClass="heading3-black" text="Rp,0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
+                                          <Label fx:id="dashboard_TI" layoutX="8.0" layoutY="40.0" styleClass="heading3-black" text="Rp,0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="754.0" layoutY="10.4" prefHeight="170.0" prefWidth="248.0" AnchorPane.bottomAnchor="10.400000000000006" AnchorPane.topAnchor="10.4">
                                        <children>
                                           <Label styleClass="heading2" text="Monthly Income" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
-                                          <Label layoutX="7.0" layoutY="39.0" styleClass="heading3-black" text="Rp,0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
+                                          <Label fx:id="dashboard_TotalI" layoutX="7.0" layoutY="39.0" styleClass="heading3-black" text="Rp,0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
                                        </children>
                                     </AnchorPane>
                                     <Line endX="100.00001525878906" endY="54.192955017089844" layoutX="400.0" layoutY="64.47370147705078" startX="100.00001525878906" startY="-43.97370147705078" />
@@ -87,7 +86,7 @@
                                  <children>
                                     <AnchorPane layoutX="165.0" layoutY="154.0" prefHeight="511.0" prefWidth="489.0" styleClass="login" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
                                        <children>
-                                          <AreaChart layoutX="-5.0" layoutY="56.0" prefHeight="511.20000000000005" prefWidth="495.2" title="Income Chart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <AreaChart fx:id="dashboard_incomeChart" layoutX="-5.0" layoutY="56.0" prefHeight="511.20000000000005" prefWidth="495.2" title="Income Chart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <xAxis>
                                               <CategoryAxis side="BOTTOM" />
                                             </xAxis>
@@ -99,7 +98,7 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="522.0" layoutY="179.0" prefHeight="511.0" prefWidth="489.0" styleClass="login" AnchorPane.bottomAnchor="20.0" AnchorPane.topAnchor="20.0">
                                        <children>
-                                          <BarChart layoutX="-5.0" layoutY="54.0" prefHeight="511.20000000000005" prefWidth="495.2" title="Customer Chart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <BarChart fx:id="dashboard_CustomerChart" layoutX="-5.0" layoutY="54.0" prefHeight="511.20000000000005" prefWidth="495.2" title="Customer Chart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <xAxis>
                                               <CategoryAxis side="BOTTOM" />
                                             </xAxis>
