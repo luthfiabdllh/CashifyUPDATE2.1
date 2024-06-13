@@ -4,7 +4,6 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -16,14 +15,9 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import org.cashify.cashifyupdate2.Database.DatabaseConnection;
-import org.cashify.cashifyupdate2.Database.data;
 
 public class ProductCardController implements Initializable {
-
-    @FXML
-    private AnchorPane card_form;
 
     @FXML
     private Label prod_name;
@@ -32,7 +26,7 @@ public class ProductCardController implements Initializable {
     private Label prod_price;
 
     @FXML
-    private Label prod_extra_info;
+    private Label prod_stock;
 
     @FXML
     private ImageView prod_imageView;
@@ -44,144 +38,63 @@ public class ProductCardController implements Initializable {
     private Button prod_addBtn;
 
     private ProductData prodData;
-    private Image image;
-
-    private String prodID;
-    private String type;
-    private String prod_date;
-    private String prod_image;
-
+    private ProductService productService;
     private SpinnerValueFactory<Integer> spin;
 
-    private Connection connect;
-    private PreparedStatement prepare;
-    private ResultSet result;
-
-    private Alert alert;
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setQuantity();
+        productService = new ProductDao();
+    }
 
     public void setData(ProductData prodData) {
         this.prodData = prodData;
 
-        if (prodData instanceof ClothingProduct) {
+        prod_name.setText(prodData.getProductName());
+        prod_price.setText("Rp. " + prodData.getPrice());
+        prod_stock.setText(String.valueOf(prodData.getStock()));
+
+        String path = "File:" + prodData.getImage();
+        Image image = new Image(path, 190, 94, false, true);
+        prod_imageView.setImage(image);
+
+        // Menampilkan informasi tambahan berdasarkan jenis produk
+        if (prodData instanceof FoodProduct) {
+            FoodProduct foodProduct = (FoodProduct) prodData;
+            prod_stock.setText("Stock: " + foodProduct.getStock() + ", Expires: " + foodProduct.getExpirationDate());
+        } else if (prodData instanceof ClothingProduct) {
             ClothingProduct clothingProduct = (ClothingProduct) prodData;
-            prod_extra_info.setText("Size: " + clothingProduct.getSize() + ", Color: " + clothingProduct.getColor());
+            prod_stock.setText("Stock: " + clothingProduct.getStock() + ", Size: " + clothingProduct.getSize() + ", Color: " + clothingProduct.getColor());
         } else if (prodData instanceof ElectronicProduct) {
             ElectronicProduct electronicProduct = (ElectronicProduct) prodData;
-            prod_extra_info.setText("Warranty: " + electronicProduct.getWarranty());
-        } else if (prodData instanceof FoodProduct) {
-            FoodProduct foodProduct = (FoodProduct) prodData;
-            prod_extra_info.setText("Expires on: " + foodProduct.getExpirationDate());
+            prod_stock.setText("Stock: " + electronicProduct.getStock() + ", Warranty: " + electronicProduct.getWarranty());
         }
-
-        prod_image = prodData.getImage();
-        prod_date = String.valueOf(prodData.getDate());
-        type = prodData.getType();
-        prodID = prodData.getProductId();
-        prod_name.setText(prodData.getProductName());
-        prod_price.setText("$" + String.valueOf(prodData.getPrice()));
-        String path = "File:" + prodData.getImage();
-        image = new Image(path, 190, 94, false, true);
-        prod_imageView.setImage(image);
-        pr = prodData.getPrice();
     }
-
-    private int qty;
 
     public void setQuantity() {
         spin = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
         prod_spinner.setValueFactory(spin);
     }
 
-    private double totalP;
-    private double pr;
-
+    @FXML
     public void addBtn() {
-        qty = prod_spinner.getValue();
-        String check = "";
-        String checkAvailable = "SELECT status FROM product WHERE prod_id = '" + prodID + "'";
-
-        connect = DatabaseConnection.getCon();
-
+        int qty = prod_spinner.getValue();
         try {
-            int checkStck = 0;
-            String checkStock = "SELECT stock FROM product WHERE prod_id = '" + prodID + "'";
-
-            prepare = connect.prepareStatement(checkStock);
-            result = prepare.executeQuery();
-
-            if (result.next()) {
-                checkStck = result.getInt("stock");
-            }
-
-            if (checkStck == 0) {
-                String updateStock = "UPDATE product SET prod_name = '" + prod_name.getText() + "', type = '" + type + "', stock = 0, price = " + pr + ", status = 'Unavailable', image = '" + prod_image + "', date = '" + prod_date + "' WHERE prod_id = '" + prodID + "'";
-                prepare = connect.prepareStatement(updateStock);
-                prepare.executeUpdate();
-            }
-
-            prepare = connect.prepareStatement(checkAvailable);
-            result = prepare.executeQuery();
-
-            if (result.next()) {
-                check = result.getString("status");
-            }
-
-            if (!check.equals("Available") || qty == 0) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Something Wrong :3");
-                alert.showAndWait();
-            } else {
-                if (checkStck < qty) {
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Invalid. This product is Out of stock");
-                    alert.showAndWait();
-                } else {
-                    prod_image = prod_image.replace("\\", "\\\\");
-
-                    String insertData = "INSERT INTO customer (customer_id, prod_id, prod_name, type, quantity, price, date, image, em_username) VALUES (?,?,?,?,?,?,?,?,?)";
-                    prepare = connect.prepareStatement(insertData);
-                    prepare.setString(1, String.valueOf(data.cID));
-                    prepare.setString(2, prodID);
-                    prepare.setString(3, prod_name.getText());
-                    prepare.setString(4, type);
-                    prepare.setString(5, String.valueOf(qty));
-
-                    totalP = (qty * pr);
-                    prepare.setString(6, String.valueOf(totalP));
-
-                    Date date = new Date();
-                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-                    prepare.setString(7, String.valueOf(sqlDate));
-
-                    prepare.setString(8, prod_image);
-                    prepare.setString(9, data.username);
-
-                    prepare.executeUpdate();
-
-                    int upStock = checkStck - qty;
-
-                    String updateStock = "UPDATE product SET prod_name = '" + prod_name.getText() + "', type = '" + type + "', stock = " + upStock + ", price = " + pr + ", status = '" + check + "', image = '" + prod_image + "', date = '" + prod_date + "' WHERE prod_id = '" + prodID + "'";
-                    prepare = connect.prepareStatement(updateStock);
-                    prepare.executeUpdate();
-
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Successfully Added!");
-                    alert.showAndWait();
-                }
-            }
+            productService.addBtn(prodData, qty);
+            showAlert(Alert.AlertType.INFORMATION, "Information Message", "Successfully Added!");
+        } catch (IllegalStateException e) {
+            showAlert(Alert.AlertType.ERROR, "Error Message", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error Message", "Something went wrong. Please try again.");
         }
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        setQuantity();
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

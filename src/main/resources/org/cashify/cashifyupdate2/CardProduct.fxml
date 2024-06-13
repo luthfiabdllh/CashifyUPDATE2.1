@@ -14,21 +14,21 @@
          <children>
             <AnchorPane prefHeight="150.0" prefWidth="220.0">
                <children>
-                  <ImageView fx:id="productImage" fitHeight="143.0" fitWidth="207.0" layoutX="8.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" styleClass="product-image" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0" />
+                  <ImageView fx:id="prod_imageView" fitHeight="143.0" fitWidth="207.0" layoutX="8.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" styleClass="product-image" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0" />
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="223.0">
                <children>
-                  <Label fx:id="productName" layoutX="8.0" styleClass="heading3" text="Indomie Goreng" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="0.0" />
-                  <Label fx:id="productPrice" layoutX="8.0" layoutY="27.0" styleClass="sub-heading-2" text="Rp. 0" />
-                  <Button fx:id="addButton" layoutX="144.79999999999998" layoutY="64.19999999999999" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" styleClass="btn-primary" text="Add" AnchorPane.bottomAnchor="9.400000000000006" AnchorPane.rightAnchor="8.0" />
-                  <Spinner fx:id="quantitySpinner" layoutX="8.0" layoutY="64.19999999999999" prefHeight="30.0" prefWidth="70.0" AnchorPane.bottomAnchor="9.400000000000006" AnchorPane.leftAnchor="8.0" />
+                  <Label fx:id="prod_name" layoutX="8.0" styleClass="heading3" text="Indomie Goreng" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="0.0" />
+                  <Label fx:id="prod_price" layoutX="8.0" layoutY="27.0" styleClass="sub-heading-2" text="Rp. 0" />
+                  <Button fx:id="prod_addBtn" layoutX="144.79999999999998" layoutY="64.19999999999999" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" styleClass="btn-primary" text="Add" AnchorPane.bottomAnchor="9.400000000000006" AnchorPane.rightAnchor="8.0" />
+                  <Spinner fx:id="prod_spinner" layoutX="8.0" layoutY="64.19999999999999" prefHeight="30.0" prefWidth="70.0" AnchorPane.bottomAnchor="9.400000000000006" AnchorPane.leftAnchor="8.0" />
                   <Label layoutX="167.0" layoutY="5.0" text="Stock">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="productStock" layoutX="195.0" layoutY="5.0" text="0">
+                  <Label fx:id="prod_stock" layoutX="195.0" layoutY="5.0" text="0">
                      <font>
                         <Font size="10.0" />
                      </font>

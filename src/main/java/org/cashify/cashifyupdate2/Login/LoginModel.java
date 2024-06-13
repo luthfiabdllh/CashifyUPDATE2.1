@@ -1,6 +1,9 @@
 package org.cashify.cashifyupdate2.Login;
 
 public class LoginModel {
+    private String username;
+
+    private String password;
     public LoginModel(String username, String password) {
         this.username = username;
         this.password = password;
@@ -21,7 +24,4 @@ public class LoginModel {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    private String username;
-    private String password;
 }
