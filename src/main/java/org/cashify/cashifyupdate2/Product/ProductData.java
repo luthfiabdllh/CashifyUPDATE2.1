@@ -1,13 +1,13 @@
 package org.cashify.cashifyupdate2.Product;
 import java.util.Date;
 
-public abstract class ProductData {
-    private int id;
+public class ProductData {
+    private Integer id;
     private String productId;
     private String productName;
     private String type;
-    private int stock;
-    private int quantity;
+    private Integer stock;
+    private Integer quantity;
     private Double price;
     private String status;
     private String image;
@@ -27,7 +27,8 @@ public abstract class ProductData {
         this.date = date;
     }
 
-    public ProductData(Integer id, String productId, String productName, String type, Integer quantity, Double price, String image, java.sql.Date date){
+    public ProductData(Integer id, String productId, String productName,
+                       String type, Integer quantity, Double price, String image, java.sql.Date date){
         this.id = id;
         this.productId = productId;
         this.productName = productName;
@@ -37,7 +38,6 @@ public abstract class ProductData {
         this.date = date;
         this.quantity = quantity;
     }
-
 
     public Integer getId() {
         return id;

@@ -230,6 +230,7 @@
                                        </columnResizePolicy>
                                     </TableView>
                                     <Button fx:id="inventory_deleteBtn" layoutX="144.0" layoutY="448.0" mnemonicParsing="false" onAction="#inventoryDeleteBtn" styleClass="btn-remove" text="Delete" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
+                                    <Button fx:id="inventory_clearBtn" layoutX="64.0" layoutY="442.0" minWidth="21.0" mnemonicParsing="false" onAction="#inventoryClearBtn" prefHeight="35.0" prefWidth="54.0" styleClass="btn-remove" text="-" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane layoutX="-109.6" layoutY="221.0" prefHeight="184.0" prefWidth="1026.0" styleClass="bar" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="500.0">

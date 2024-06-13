@@ -325,7 +325,6 @@ public class DasboardController implements Initializable{
             alert.showAndWait();
 
         } else {
-
             String path = data.path;
             path = path.replace("\\", "\\\\");
 
