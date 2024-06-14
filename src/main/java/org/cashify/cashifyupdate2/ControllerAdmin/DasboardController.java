@@ -471,7 +471,8 @@ public class DasboardController implements Initializable{
 
             while (result.next()) {
 
-                prodData = new ProductData(result.getInt("id"),
+                prodData = new ProductData(
+                        result.getInt("id"),
                         result.getString("prod_id"),
                         result.getString("prod_name"),
                         result.getString("type"),
