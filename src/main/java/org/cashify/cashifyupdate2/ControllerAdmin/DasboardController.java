@@ -473,9 +473,9 @@ public class DasboardController implements Initializable{
         totalP = 0;
         change = 0;
         amount = 0;
-        menu_total.setText("$0.0");
+        menu_total.setText("Rp 0.0");
         menu_amount.setText("");
-        menu_change.setText("$0.0");
+        menu_change.setText("Rp 0.0");
     }
 
     public void customerID()  {
@@ -567,6 +567,8 @@ public class DasboardController implements Initializable{
             management_form.setVisible(false);
 
             menuDisplayCard();
+            menuDisplayTotal();
+            menuShowOrderData();
 
         } else if (event.getSource() == inventoryButton) {
             dashboard_form.setVisible(false);
