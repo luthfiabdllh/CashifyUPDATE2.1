@@ -11,6 +11,7 @@ module org.cashify.cashifyupdate2 {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires jasperreports;
 
     opens org.cashify.cashifyupdate2 to javafx.fxml;
     exports org.cashify.cashifyupdate2;
@@ -24,4 +25,6 @@ module org.cashify.cashifyupdate2 {
     opens org.cashify.cashifyupdate2.SideController to javafx.fxml;
     exports org.cashify.cashifyupdate2.ControllerAdmin;
     opens org.cashify.cashifyupdate2.ControllerAdmin to javafx.fxml;
+    opens org.cashify.cashifyupdate2.Card to javafx.fxml;
+    exports org.cashify.cashifyupdate2.Card;
 }

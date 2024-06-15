@@ -202,33 +202,6 @@
     -fx-background-radius: 10;
 }
 
-.spinner {
-    -fx-background-radius: 10;
-}
-.spinner .increment-arrow-button {
-	-fx-background-color: #3772FF;
-	-fx-background-radius: 0 10 0 0;
-}
-
-.spinner .decrement-arrow-button {
-	-fx-background-color: #3772FF;
-	-fx-background-radius: 0 0 10 0;
-}
-.spinner .increment-arrow-button:hover,
-.spinner .decrement-arrow-button:hover {
-	-fx-background-color: -fx-secondary-color;
-}
-.spinner .increment-arrow-button:hover:pressed,
-.spinner .decrement-arrow-button:hover:pressed,
-.spinner .increment-arrow-button:pressed,
-.spinner .decrement-arrow-button:pressed {
-	-fx-background-color: #91B1FF;
-}
-.spinner .increment-arrow-button .increment-arrow,
-.spinner .decrement-arrow-button .decrement-arrow {
-	-fx-background-color: #FDFDFF;
-}
-
 /* Bar Chart Background */
 .chart {
     -fx-background-color: #FDFDFF;

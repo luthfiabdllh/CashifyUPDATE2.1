@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
@@ -18,6 +19,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.design.*;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
+import org.cashify.cashifyupdate2.Card.ProductCardController;
 import org.cashify.cashifyupdate2.Customer.CustomerData;
 import org.cashify.cashifyupdate2.Database.DatabaseConnection;
 import org.cashify.cashifyupdate2.Database.data;
@@ -30,6 +41,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
+
+
 
 public class DasboardController implements Initializable{
     @FXML
@@ -73,18 +86,18 @@ public class DasboardController implements Initializable{
 //  Report
 //    @FXML
 //    private AnchorPane dashboard_form;
-//    @FXML
-//    private Label dashboard_NC;
-//    @FXML
-//    private Label dashboard_TI;
-//    @FXML
-//    private Label dashboard_TotalI;
-//    @FXML
-//    private Label dashboard_NSP;
-//    @FXML
-//    private AreaChart<?, ?> dashboard_incomeChart;
-//    @FXML
-//    private BarChart<?, ?> dashboard_CustomerChart;
+    @FXML
+    private Label dashboard_NC;
+    @FXML
+    private Label dashboard_TI;
+    @FXML
+    private Label dashboard_TotalI;
+    @FXML
+    private Label dashboard_NSP;
+    @FXML
+    private AreaChart<?, ?> dashboard_incomeChart;
+    @FXML
+    private BarChart<?, ?> dashboard_CustomerChart;
 //  Inventory
     @FXML
     private TableView<ProductData> inventory_tableView;
@@ -127,30 +140,30 @@ public class DasboardController implements Initializable{
     @FXML
     private ComboBox<?> inventory_type;
 //  menu
-//    @FXML
-//    private ScrollPane menu_scrollPane;
-//    @FXML
-//    private GridPane menu_gridPane;
-//    @FXML
-//    private TableView<ProductData> menu_tableView;
-//    @FXML
-//    private TableColumn<ProductData, String> menu_col_productName;
-//    @FXML
-//    private TableColumn<ProductData, String> menu_col_quantity;
-//    @FXML
-//    private TableColumn<ProductData, String> menu_col_price;
-//    @FXML
-//    private Label menu_total;
-//    @FXML
-//    private TextField menu_amount;
-//    @FXML
-//    private Label menu_change;
-//    @FXML
-//    private Button menu_payBtn;
-//    @FXML
-//    private Button menu_removeBtn;
-//    @FXML
-//    private Button menu_receiptBtn;
+    @FXML
+    private ScrollPane menu_scrollPane;
+    @FXML
+    private GridPane menu_gridPane;
+    @FXML
+    private TableView<ProductData> menu_tableView;
+    @FXML
+    private TableColumn<ProductData, String> menu_col_productName;
+    @FXML
+    private TableColumn<ProductData, String> menu_col_quantity;
+    @FXML
+    private TableColumn<ProductData, String> menu_col_price;
+    @FXML
+    private Label menu_total;
+    @FXML
+    private TextField menu_amount;
+    @FXML
+    private Label menu_change;
+    @FXML
+    private Button menu_payBtn;
+    @FXML
+    private Button menu_removeBtn;
+    @FXML
+    private Button menu_receiptBtn;
     // dashboard
 //    @FXML
 //    private AnchorPane dashboard_form;
@@ -168,6 +181,359 @@ public class DasboardController implements Initializable{
 //    @FXML
 //    private TableColumn<CustomerData, String> customers_col_cashier;
 
+    private int cID;
+
+
+//
+   public ObservableList<ProductData> menuGetData() {
+
+       String sql = "SELECT * FROM product";
+
+       ObservableList<ProductData> listData = FXCollections.observableArrayList();
+       DatabaseConnection.getCon();
+
+       try {
+           prepare = connect.prepareStatement(sql);
+           result = prepare.executeQuery();
+
+           ProductData prod;
+
+           while(result.next()) {
+               prod = new ProductData(result.getInt("id"),
+                       result.getString("prod_id"),
+                       result.getString("prod_name"),
+                       result.getString("type"),
+                       result.getInt("stock"),
+                       result.getDouble("price"),
+                       result.getString("image"),
+                       result.getDate("date"));
+
+               listData.add(prod);
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+
+       return listData;
+   }
+
+   public void menuDisplayCard() {
+       cardListData.clear();
+       cardListData.addAll(menuGetData());
+
+       int row = 0;
+       int column = 0;
+
+       menu_gridPane.getChildren().clear();
+       menu_gridPane.getRowConstraints().clear();
+       menu_gridPane.getColumnConstraints().clear();
+
+       for (int q = 0; q < cardListData.size(); q++) {
+
+           try {
+               FXMLLoader load = new FXMLLoader();
+               load.setLocation(getClass().getResource("/org/cashify/cashifyupdate2/CardProduct.fxml"));
+               AnchorPane pane = load.load();
+               ProductCardController cardC = load.getController();
+               cardC.setData(cardListData.get(q));
+
+               if (column == 3) {
+                   column = 0;
+                   row += 1;
+               }
+
+               menu_gridPane.add(pane, column++, row);
+
+               GridPane.setMargin(pane, new Insets(10));
+
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+       }
+   }
+
+    public ObservableList<ProductData> menuGetOrder() {
+        customerID();
+        ObservableList<ProductData> listData = FXCollections.observableArrayList();
+
+        String sql = "SELECT * FROM customer WHERE customer_id = " + cID;
+
+        connect = DatabaseConnection.getCon();
+
+        try {
+
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            ProductData prod;
+
+            while (result.next()) {
+                prod = new ProductData(result.getInt("id"),
+                        result.getString("prod_id"),
+                        result.getString("prod_name"),
+                        result.getString("type"),
+                        result.getInt("quantity"),
+                        result.getDouble("price"),
+                        result.getString("image"),
+                        result.getDate("date"));
+                listData.add(prod);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return listData;
+    }
+
+    private ObservableList<ProductData> menuOrderListData;
+
+    public void menuShowOrderData() {
+        menuOrderListData = menuGetOrder();
+
+        menu_col_productName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        menu_col_quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        menu_col_price.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        menu_tableView.setItems(menuOrderListData);
+    }
+    private int getid;
+
+    public void menuSelectOrder() {
+        ProductData prod = menu_tableView.getSelectionModel().getSelectedItem();
+        int num = menu_tableView.getSelectionModel().getSelectedIndex();
+
+        if ((num - 1) < -1) {
+            return;
+        }
+        // TO GET THE ID PER ORDER
+        getid = prod.getId();
+
+    }
+
+    private double totalP;
+
+    public void menuDisplayTotal() {
+        menuGetTotal();
+        menu_total.setText("Rp. " + totalP);
+    }
+
+    private double amount;
+    private double change;
+
+    public void menuAmount() {
+        menuGetTotal();
+        if (menu_amount.getText().isEmpty() || totalP == 0) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Invalid :3");
+            alert.showAndWait();
+        } else {
+            amount = Double.parseDouble(menu_amount.getText());
+            if (amount < totalP) {
+                menu_amount.setText("");
+            } else {
+                change = (amount - totalP);
+                menu_change.setText("Rp. " + change);
+            }
+        }
+    }
+
+    public void menuPayBtn() {
+
+        if (totalP == 0) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please choose your order first!");
+            alert.showAndWait();
+        } else {
+            menuGetTotal();
+            String insertPay = "INSERT INTO receipt (customer_id, total, date, em_username) "
+                    + "VALUES(?,?,?,?)";
+
+            connect = DatabaseConnection.getCon();
+
+            try {
+
+                if (amount == 0) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Messaged");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Something wrong :3");
+                    alert.showAndWait();
+                } else {
+                    alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Are you sure?");
+                    Optional<ButtonType> option = alert.showAndWait();
+
+                    if (option.get().equals(ButtonType.OK)) {
+                        customerID();
+                        menuGetTotal();
+                        prepare = connect.prepareStatement(insertPay);
+                        prepare.setString(1, String.valueOf(cID));
+                        prepare.setString(2, String.valueOf(totalP));
+
+                        Date date = new Date();
+                        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+                        prepare.setString(3, String.valueOf(sqlDate));
+                        prepare.setString(4, data.username);
+
+                        prepare.executeUpdate();
+
+                        alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Infomation Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Successful.");
+                        alert.showAndWait();
+
+                        menuShowOrderData();
+
+                    } else {
+                        alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Infomation Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Cancelled.");
+                        alert.showAndWait();
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void menuRemoveBtn() {
+
+        if (getid == 0) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select the order you want to remove");
+            alert.showAndWait();
+        } else {
+            String deleteData = "DELETE FROM customer WHERE id = " + getid;
+            connect = DatabaseConnection.getCon();
+            try {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to delete this order?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if (option.get().equals(ButtonType.OK)) {
+                    prepare = connect.prepareStatement(deleteData);
+                    prepare.executeUpdate();
+                }
+
+                menuShowOrderData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+//    public void menuReceiptBtn() {
+//
+//        if (totalP == 0 || menu_amount.getText().isEmpty()) {
+//            alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("Error Message");
+//            alert.setContentText("Please order first");
+//            alert.showAndWait();
+//        } else {
+//            HashMap map = new HashMap();
+//            map.put("getReceipt", (cID - 1));
+//
+//            try {
+//
+//                JasperDesign jDesign = JRXmlLoader.load("org/cashify/cashifyupdate2/report.jrxml");
+//                JasperReport jReport = JasperCompileManager.compileReport(jDesign);
+//                JasperPrint jPrint = JasperFillManager.fillReport(jReport, map, connect);
+//
+//                JasperViewer.viewReport(jPrint, false);
+//
+//                menuRestart();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//    }
+
+    public void menuRestart() {
+        totalP = 0;
+        change = 0;
+        amount = 0;
+        menu_total.setText("$0.0");
+        menu_amount.setText("");
+        menu_change.setText("$0.0");
+    }
+
+    public void customerID()  {
+
+        String sql = "SELECT MAX(customer_id) FROM customer";
+        connect = DatabaseConnection.getCon();
+
+        try {
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            if (result.next()) {
+                cID = result.getInt("MAX(customer_id)");
+            }
+
+            String checkCID = "SELECT MAX(customer_id) FROM receipt";
+            prepare = connect.prepareStatement(checkCID);
+            result = prepare.executeQuery();
+            int checkID = 0;
+            if (result.next()) {
+                checkID = result.getInt("MAX(customer_id)");
+            }
+
+            if (cID == 0) {
+                cID += 1;
+            } else if (cID == checkID) {
+                cID += 1;
+            }
+
+            data.cID = cID;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void menuGetTotal() {
+        customerID();
+        String total = "SELECT SUM(price) FROM customer WHERE customer_id = " + cID;
+
+        connect = DatabaseConnection.getCon();
+
+        try {
+
+            prepare = connect.prepareStatement(total);
+            result = prepare.executeQuery();
+
+            if (result.next()) {
+                totalP = result.getDouble("SUM(price)");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 //  Sidebar
     public void logout() {
@@ -180,7 +546,7 @@ public class DasboardController implements Initializable{
 
             if (option.get().equals(ButtonType.OK)) {
                 logoutButton.getScene().getWindow().hide();
-                Parent root = FXMLLoader.load(getClass().getResource("/ org/cashify/cashifyupdate2/LogIn.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/org/cashify/cashifyupdate2/LogIn.fxml"));
                 Stage stage = new Stage();
                 Scene scene = new Scene(root);
                 stage.setTitle("Cafe Shop Management System");
@@ -200,6 +566,7 @@ public class DasboardController implements Initializable{
             report_form.setVisible(false);
             management_form.setVisible(false);
 
+            menuDisplayCard();
 
         } else if (event.getSource() == inventoryButton) {
             dashboard_form.setVisible(false);
@@ -207,6 +574,10 @@ public class DasboardController implements Initializable{
             product_form.setVisible(false);
             report_form.setVisible(false);
             management_form.setVisible(false);
+
+            inventoryTypeList();
+            inventoryStatusList();
+            inventoryShowData();
 
         } else if (event.getSource() == productButton) {
             dashboard_form.setVisible(false);
@@ -446,7 +817,7 @@ public class DasboardController implements Initializable{
         if (file != null) {
 
             data.path = file.getAbsolutePath();
-            image = new Image(file.toURI().toString(), 120, 127, false, true);
+            image = new Image(file.toURI().toString(), 100, 100, false, true);
 
             inventory_imageView.setImage(image);
         }
@@ -564,11 +935,18 @@ public class DasboardController implements Initializable{
     }
 
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         inventoryTypeList();
         inventoryStatusList();
         inventoryShowData();
+
+        menuDisplayCard();
+        menuGetOrder();
+        menuDisplayTotal();
+        menuShowOrderData();
+
     }
 
 }
