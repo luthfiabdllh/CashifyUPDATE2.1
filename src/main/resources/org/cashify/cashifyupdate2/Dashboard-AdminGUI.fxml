@@ -91,7 +91,7 @@
                                           <Label layoutX="19.0" layoutY="464.0" prefHeight="39.0" prefWidth="92.0" styleClass="heading3" text="Amount" />
                                           <TextField fx:id="menu_amount" onAction="#menuAmount" layoutX="93.0" layoutY="471.0" prefHeight="26.0" prefWidth="200.0" styleClass="field-secondary" />
                                           <Button fx:id="menu_payBtn" onAction="#menuPayBtn" layoutX="16.0" layoutY="582.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="283.0" styleClass="btn-primary" text="Pay" />
-                                          <Button fx:id="menu_reiceptBtn" onAction="#menuReceiptBtn"  layoutX="16.0" layoutY="639.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="283.0" styleClass="btn-secondary" text="Reicept" />
+<!--                                          <Button fx:id="menu_reiceptBtn" onAction="#menuReceiptBtn"  layoutX="16.0" layoutY="639.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="283.0" styleClass="btn-secondary" text="Reicept" />-->
                                           <Button layoutX="1.0" layoutY="1.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="70.0" styleClass="btn-remove" text="Cancel" />
                                        </children>
                                     </AnchorPane>

@@ -2,6 +2,7 @@ package org.cashify.cashifyupdate2.Product;
 
 import org.cashify.cashifyupdate2.Database.DatabaseConnection;
 import org.cashify.cashifyupdate2.Database.data;
+import org.cashify.cashifyupdate2.Product.ProductData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,9 +12,13 @@ import java.util.Date;
 
 public class ProductDao implements ProductService {
     private Connection connect;
+
+    public ProductDao() {
+        connect = DatabaseConnection.getCon();
+    }
+
     @Override
     public void addBtn(ProductData prodData, int qty) throws SQLException {
-        connect = DatabaseConnection.getCon();
         String prodID = prodData.getProductId();
         String checkAvailable = "SELECT status FROM product WHERE prod_id = ?";
         String checkStockQuery = "SELECT stock FROM product WHERE prod_id = ?";
@@ -40,7 +45,7 @@ public class ProductDao implements ProductService {
                 prepare.setInt(3, 0);
                 prepare.setDouble(4, prodData.getPrice());
                 prepare.setString(5, "Unavailable");
-                prepare.setString(6, prodData.getImage());
+                prepare.setBytes(6, prodData.getImage());
                 prepare.setDate(7, new java.sql.Date(prodData.getDate().getTime()));
                 prepare.setString(8, prodID);
                 prepare.executeUpdate();
@@ -73,7 +78,7 @@ public class ProductDao implements ProductService {
                     prepare.setInt(5, qty);
                     prepare.setDouble(6, totalP);
                     prepare.setDate(7, sqlDate);
-                    prepare.setString(8, prodData.getImage());
+                    prepare.setBytes(8, prodData.getImage());
                     prepare.setString(9, data.username);
                     prepare.executeUpdate();
 
@@ -85,7 +90,7 @@ public class ProductDao implements ProductService {
                     prepare.setInt(3, upStock);
                     prepare.setDouble(4, prodData.getPrice());
                     prepare.setString(5, check);
-                    prepare.setString(6, prodData.getImage());
+                    prepare.setBytes(6, prodData.getImage());
                     prepare.setDate(7, new java.sql.Date(prodData.getDate().getTime()));
                     prepare.setString(8, prodID);
                     prepare.executeUpdate();

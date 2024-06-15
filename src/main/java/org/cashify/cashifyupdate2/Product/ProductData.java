@@ -10,12 +10,10 @@ public class ProductData {
     private Integer quantity;
     private Double price;
     private String status;
-    private String image;
+    private byte[] image;
     private Date date;
 
-    public ProductData(Integer id, String productId,
-                       String productName, String type, Integer stock,
-                       Double price, String status, String image, java.sql.Date date) {
+    public ProductData(Integer id, String productId, String productName, String type, Integer stock, Double price, String status, byte[] image, java.sql.Date date) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
@@ -27,8 +25,7 @@ public class ProductData {
         this.date = date;
     }
 
-    public ProductData(Integer id, String productId, String productName,
-                       String type, Integer quantity, Double price, String image, java.sql.Date date){
+    public ProductData(Integer id, String productId, String productName, String type, Integer quantity, Double price, byte[] image, java.sql.Date date){
         this.id = id;
         this.productId = productId;
         this.productName = productName;
@@ -38,6 +35,7 @@ public class ProductData {
         this.date = date;
         this.quantity = quantity;
     }
+
 
     public Integer getId() {
         return id;
@@ -71,7 +69,7 @@ public class ProductData {
         return status;
     }
 
-    public String getImage() {
+    public byte[] getImage() {
         return image;
     }
 

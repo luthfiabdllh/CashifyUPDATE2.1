@@ -12,6 +12,7 @@ module org.cashify.cashifyupdate2 {
     requires com.almasb.fxgl.all;
     requires java.sql;
     requires jasperreports;
+    requires java.desktop;
 
     opens org.cashify.cashifyupdate2 to javafx.fxml;
     exports org.cashify.cashifyupdate2;
