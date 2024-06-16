@@ -30,10 +30,12 @@ import net.sf.jasperreports.engine.design.*;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import org.cashify.cashifyupdate2.Card.ProductCardController;
+import org.cashify.cashifyupdate2.Card.ProductCardViewController;
 import org.cashify.cashifyupdate2.Customer.CustomerData;
 import org.cashify.cashifyupdate2.Database.DatabaseConnection;
 import org.cashify.cashifyupdate2.Database.data;
 import org.cashify.cashifyupdate2.Product.ProductData;
+import org.cashify.cashifyupdate2.Users.UserData;
 
 import java.io.*;
 import java.net.URL;
@@ -189,6 +191,329 @@ public class DasboardController implements Initializable{
     private TableColumn<CustomerData, String> customers_col_cashier;
 
     private int cID;
+
+//    Sign UP
+    @FXML
+    private TextField su_username;
+    @FXML
+    private TextField su_password;
+    @FXML
+    private ComboBox<?> su_role;
+    @FXML
+    private Button su_signupBtn;
+    @FXML
+    private Button su_updateBtn;
+
+    @FXML
+    private TableView<UserData> users_tableView;
+    @FXML
+    private TableColumn<UserData, String> users_col_username;
+    @FXML
+    private TableColumn<UserData, String> users_col_password;
+    @FXML
+    private TableColumn<UserData, String> users_col_role;
+    @FXML
+    private Button user_deleteBtn;
+
+
+//    Product
+    @FXML
+    private GridPane product_gridPane;
+    @FXML
+    private ScrollPane product_scrollPane;
+
+    public void productDisplayCard() {
+        cardListData.clear();
+        cardListData.addAll(menuGetData());
+
+        int row = 0;
+        int column = 0;
+
+        product_gridPane.getChildren().clear();
+        product_gridPane.getRowConstraints().clear();
+        product_gridPane.getColumnConstraints().clear();
+
+        for (int q = 0; q < cardListData.size(); q++) {
+
+            try {
+                FXMLLoader load = new FXMLLoader();
+                load.setLocation(getClass().getResource("/org/cashify/cashifyupdate2/CardProductView.fxml"));
+                AnchorPane panel = load.load();
+                ProductCardViewController cardv = load.getController();
+                cardv.setData(cardListData.get(q));
+
+                if (column == 3) {
+                    column = 0;
+                    row += 1;
+                }
+
+                product_gridPane.add(panel, column++, row);
+
+                GridPane.setMargin(panel, new Insets(10));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    public void userUpdateBtn() {
+
+        if (su_username.getText().isEmpty()
+                || su_password.getText().isEmpty()
+                || su_role.getSelectionModel().getSelectedItem() == null) {
+
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+
+        } else {
+
+            String updateData ="UPDATE users SET " +
+                    "username='" + su_username.getText() + "', " +
+                    "password='" + su_password.getText() + "', " +
+                    "role='" + su_role.getSelectionModel().getSelectedItem() + "' " +
+                    "WHERE username='" + su_username.getText() + "'";
+
+            connect = DatabaseConnection.getCon();
+
+            try {
+
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to UPDATE : " + su_username.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if (option.get().equals(ButtonType.OK)) {
+                    prepare = connect.prepareStatement(updateData);
+                    prepare.executeUpdate();
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Updated!");
+                    alert.showAndWait();
+
+                    // TO UPDATE YOUR TABLE VIEW
+                    userShowData();
+                    // TO CLEAR YOUR FIELDS
+                    userClearBtn();
+                } else {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Cancelled.");
+                    alert.showAndWait();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    public void userDeleteBtn() {
+        if (data.username == null) {
+
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+
+        } else {
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to DELETE account : " + su_username.getText() + "?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                String deleteData = "DELETE from users  " + "WHERE username='" + su_username.getText() + "'";
+
+                try {
+                    prepare = connect.prepareStatement(deleteData);
+                    prepare.executeUpdate();
+
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("successfully Deleted!");
+                    alert.showAndWait();
+
+                    // TO UPDATE YOUR TABLE VIEW
+                    userShowData();
+                    // TO CLEAR YOUR FIELDS
+                    userClearBtn();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Cancelled");
+                alert.showAndWait();
+            }
+        }
+    }
+
+
+
+    public void userSelectData() {
+
+        UserData usData = users_tableView.getSelectionModel().getSelectedItem();
+        int num = users_tableView.getSelectionModel().getSelectedIndex();
+
+        if ((num - 1) < -1) {
+            return;
+        }
+
+        su_username.setText(usData.getUsername());
+        su_password.setText(usData.getPassword());
+    }
+
+    public ObservableList<UserData> userDataList() {
+
+        ObservableList<UserData> listData = FXCollections.observableArrayList();
+
+        String sql = "SELECT * FROM users";
+
+        connect = DatabaseConnection.getCon();
+
+        try {
+
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            UserData usData;
+
+            while (result.next()) {
+
+                usData = new UserData(result.getString("username"),
+                        result.getString("password"),
+                        result.getString("role"));
+
+                listData.add(usData);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
+
+
+
+    private ObservableList<UserData> userListData;
+
+    public void userShowData() {
+        userListData = userDataList();
+
+        users_col_username.setCellValueFactory(new PropertyValueFactory<>("username"));
+        users_col_password.setCellValueFactory(new PropertyValueFactory<>("password"));
+        users_col_role.setCellValueFactory(new PropertyValueFactory<>("role"));
+
+        users_tableView.setItems(userListData);
+    }
+
+
+
+    public void user_regBtn() {
+
+        if (su_username.getText().isEmpty() || su_password.getText().isEmpty()
+                || su_role.getSelectionModel().getSelectedItem()== null) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+        } else {
+
+            String regData = "INSERT INTO users (username, password, role) "
+                    + "VALUES(?,?,?)";
+            connect = DatabaseConnection.getCon();
+
+            try {
+                // CHECK IF THE USERNAME IS ALREADY RECORDED
+                String checkUsername = "SELECT username FROM users WHERE username = '"
+                        + su_username.getText() + "'";
+
+                prepare = connect.prepareStatement(checkUsername);
+                result = prepare.executeQuery();
+
+                if (result.next()) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText(su_username.getText() + " is already taken");
+                    alert.showAndWait();
+                } else if (su_password.getText().length() < 8) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid Password, atleast 8 characters are needed");
+                    alert.showAndWait();
+                } else {
+                    prepare = connect.prepareStatement(regData);
+                    prepare.setString(1, su_username.getText());
+                    prepare.setString(2, su_password.getText());
+                    prepare.setString(3, (String) su_role.getSelectionModel().getSelectedItem());
+
+
+                    prepare.executeUpdate();
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully registered Account!");
+                    alert.showAndWait();
+
+                    userShowData();
+                    userClearBtn();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void userClearBtn() {
+        su_username.setText("");
+        su_password.setText("");
+        su_role.getSelectionModel().clearSelection();
+    }
+
+    private String[] usertypeList = {"admin", "employee", "customer"};
+
+    public void userTypeList() {
+
+        List<String> typeL = new ArrayList<>();
+
+        for (String data : usertypeList) {
+            typeL.add(data);
+        }
+
+        ObservableList llistData = FXCollections.observableArrayList(typeL);
+        su_role.setItems(llistData);
+    }
+
+
+
+
+
+
 
     public ObservableList<CustomerData> customersDataList() {
 
@@ -786,6 +1111,7 @@ public class DasboardController implements Initializable{
             report_form.setVisible(false);
             management_form.setVisible(false);
             customers_form.setVisible(false);
+            productDisplayCard();
         } else if (event.getSource() == reportButton) {
             dashboard_form.setVisible(false);
             inventory_form.setVisible(false);
@@ -806,6 +1132,7 @@ public class DasboardController implements Initializable{
             report_form.setVisible(false);
             management_form.setVisible(false);
             customers_form.setVisible(true);
+            customersShowData();
 
         } else if (event.getSource() == managementButton) {
             dashboard_form.setVisible(false);
@@ -814,7 +1141,9 @@ public class DasboardController implements Initializable{
             report_form.setVisible(false);
             management_form.setVisible(true);
             customers_form.setVisible(false);
-            customersShowData();
+            userShowData();
+            userTypeList();
+
         }
     }
 
@@ -898,178 +1227,119 @@ public class DasboardController implements Initializable{
     }
 
 
+
     public void inventoryUpdateBtn() {
+
         if (inventory_productID.getText().isEmpty()
                 || inventory_productName.getText().isEmpty()
                 || inventory_type.getSelectionModel().getSelectedItem() == null
                 || inventory_stock.getText().isEmpty()
                 || inventory_price.getText().isEmpty()
                 || inventory_status.getSelectionModel().getSelectedItem() == null
-                || data.id == 0) {
+                || data.path == null || data.id == 0) {
 
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
             alert.setContentText("Please fill all blank fields");
             alert.showAndWait();
+
         } else {
+            String path = data.path;
+            path = path.replace("\\", "\\\\");
+
             String updateData = "UPDATE product SET "
-                    + "prod_id = ?, prod_name = ?, type = ?, stock = ?, price = ?, status = ?, image = ?, date = ? "
-                    + "WHERE id = ?";
+                    + "prod_id = '" + inventory_productID.getText() + "', prod_name = '"
+                    + inventory_productName.getText() + "', type = '"
+                    + inventory_type.getSelectionModel().getSelectedItem() + "', stock = '"
+                    + inventory_stock.getText() + "', price = '"
+                    + inventory_price.getText() + "', status = '"
+                    + inventory_status.getSelectionModel().getSelectedItem() + "', image = '"
+                    + path + "', date = '"
+                    + data.date + "' WHERE id = " + data.id;
 
             connect = DatabaseConnection.getCon();
 
             try {
-                // Convert image to byte array if a new image is provided
-                byte[] imageBytes = null;
-                if (data.path != null && !data.path.isEmpty()) {
-                    File imageFile = new File(data.path);
-
-                    if (!imageFile.exists()) {
-                        alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Image file does not exist");
-                        alert.showAndWait();
-                        return;
-                    }
-
-                    try (FileInputStream fis = new FileInputStream(imageFile);
-                         ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-
-                        byte[] buf = new byte[1024];
-                        int readNum;
-                        while ((readNum = fis.read(buf)) != -1) {
-                            bos.write(buf, 0, readNum);
-                        }
-                        imageBytes = bos.toByteArray();
-                    }
-                }
 
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirmation Message");
+                alert.setTitle("Error Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Are you sure you want to UPDATE Product ID: " + inventory_productID.getText() + "?");
+                alert.setContentText("Are you sure you want to UPDATE PRoduct ID: " + inventory_productID.getText() + "?");
                 Optional<ButtonType> option = alert.showAndWait();
 
-                if (option.isPresent() && option.get().equals(ButtonType.OK)) {
-                    try (PreparedStatement prepare = connect.prepareStatement(updateData)) {
-                        prepare.setString(1, inventory_productID.getText());
-                        prepare.setString(2, inventory_productName.getText());
-                        prepare.setString(3, (String) inventory_type.getSelectionModel().getSelectedItem());
-                        prepare.setInt(4, Integer.parseInt(inventory_stock.getText()));
-                        prepare.setDouble(5, Double.parseDouble(inventory_price.getText()));
-                        prepare.setString(6, (String) inventory_status.getSelectionModel().getSelectedItem());
+                if (option.get().equals(ButtonType.OK)) {
+                    prepare = connect.prepareStatement(updateData);
+                    prepare.executeUpdate();
 
-                        if (imageBytes != null) {
-                            prepare.setBytes(7, imageBytes);
-                        } else {
-                            // Retrieve current image from database if no new image is provided
-                            String selectImage = "SELECT image FROM product WHERE id = ?";
-                            try (PreparedStatement selectPrepare = connect.prepareStatement(selectImage)) {
-                                selectPrepare.setInt(1, data.id);
-                                try (ResultSet resultSet = selectPrepare.executeQuery()) {
-                                    if (resultSet.next()) {
-                                        prepare.setBytes(7, resultSet.getBytes("image"));
-                                    } else {
-                                        alert = new Alert(Alert.AlertType.ERROR);
-                                        alert.setTitle("Error Message");
-                                        alert.setHeaderText(null);
-                                        alert.setContentText("Product not found");
-                                        alert.showAndWait();
-                                        return;
-                                    }
-                                }
-                            }
-                        }
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Updated!");
+                    alert.showAndWait();
 
-                        // Get current date
-                        Date date = new Date();
-                        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-                        prepare.setDate(8, sqlDate);
-
-                        prepare.setInt(9, data.id); // ID of the product to update
-
-                        prepare.executeUpdate();
-
-                        alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Information Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Successfully Updated!");
-                        alert.showAndWait();
-
-                        // Update table view
-                        inventoryShowData();
-                        // Clear input fields
-                        inventoryClearBtn();
-                    }
+                    // TO UPDATE YOUR TABLE VIEW
+                    inventoryShowData();
+                    // TO CLEAR YOUR FIELDS
+                    inventoryClearBtn();
                 } else {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText(null);
-                    alert.setContentText("Update cancelled.");
+                    alert.setContentText("Cancelled.");
                     alert.showAndWait();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Error updating product: " + e.getMessage());
-                alert.showAndWait();
             }
         }
     }
 
-
     public void inventoryDeleteBtn() {
-        if ( data.id == 0) {
+        if (data.id == 0) {
+
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
             alert.setContentText("Please fill all blank fields");
             alert.showAndWait();
-            return;
-        }
 
-        alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Error Message");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to DELETE Product ID: " + inventory_productID.getText() + "?");
-        Optional<ButtonType> option = alert.showAndWait();
-
-        if (option.isPresent() && option.get().equals(ButtonType.OK)) {
-            String deleteData = "DELETE FROM product WHERE id = ?";
-            try {
-                connect = DatabaseConnection.getCon();
-                prepare = connect.prepareStatement(deleteData);
-                prepare.setInt(1, data.id);
-                prepare.executeUpdate();
-
-                alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Deleted!");
-                alert.showAndWait();
-
-                // TO UPDATE YOUR TABLE VIEW
-                inventoryShowData();
-                // TO CLEAR YOUR FIELDS
-                inventoryClearBtn();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         } else {
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information Message");
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Error Message");
             alert.setHeaderText(null);
-            alert.setContentText("Cancelled");
-            alert.showAndWait();
+            alert.setContentText("Are you sure you want to DELETE Product ID: " + inventory_productID.getText() + "?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                String deleteData = "DELETE FROM product WHERE id = " + data.id;
+                try {
+                    prepare = connect.prepareStatement(deleteData);
+                    prepare.executeUpdate();
+
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("successfully Deleted!");
+                    alert.showAndWait();
+
+                    // TO UPDATE YOUR TABLE VIEW
+                    inventoryShowData();
+                    // TO CLEAR YOUR FIELDS
+                    inventoryClearBtn();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Cancelled");
+                alert.showAndWait();
+            }
         }
     }
-
-
 
 
 
@@ -1164,7 +1434,11 @@ public class DasboardController implements Initializable{
         ProductData prodData = inventory_tableView.getSelectionModel().getSelectedItem();
         int num = inventory_tableView.getSelectionModel().getSelectedIndex();
 
-        if (num < 0 || prodData == null || prodData.getId() == null) {
+        if ((num - 1) < -1) {
+            return;
+        }
+
+        if (prodData == null || prodData.getId() == null) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
@@ -1178,66 +1452,26 @@ public class DasboardController implements Initializable{
         inventory_stock.setText(String.valueOf(prodData.getStock()));
         inventory_price.setText(String.valueOf(prodData.getPrice()));
 
+        data.date = String.valueOf(prodData.getDate());
         data.id = prodData.getId();
 
         try {
-            // Menampilkan gambar dari byte array
-            byte[] imageBytes = prodData.getImage();
-            if (imageBytes != null && imageBytes.length > 0) {
+            String query = "SELECT image FROM product WHERE id = ?";
+            connect = DatabaseConnection.getCon();
+            prepare = connect.prepareStatement(query);
+            prepare.setInt(1, prodData.getId());
+            result = prepare.executeQuery();
+
+            if (result.next()) {
+                byte[] imageBytes = result.getBytes("image");
                 InputStream is = new ByteArrayInputStream(imageBytes);
                 Image image = new Image(is);
                 inventory_imageView.setImage(image);
-            } else {
-                // Jika gambar tidak ada, kosongkan ImageView
-                inventory_imageView.setImage(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-//    public void inventorySelectData() {
-//
-//        ProductData prodData = inventory_tableView.getSelectionModel().getSelectedItem();
-//        int num = inventory_tableView.getSelectionModel().getSelectedIndex();
-//
-//        if ((num - 1) < -1) {
-//            return;
-//        }
-//
-//        inventory_productID.setText(prodData.getProductId());
-//        inventory_productName.setText(prodData.getProductName());
-//        inventory_stock.setText(String.valueOf(prodData.getStock()));
-//        inventory_price.setText(String.valueOf(prodData.getPrice()));
-//
-//        data.path = Arrays.toString(prodData.getImage());
-//
-////        String path = "File:" + prodData.getImage();
-//        data.date = String.valueOf(prodData.getDate());
-//        data.id = prodData.getId();
-//
-//        try {
-//            String query = "SELECT image FROM product WHERE id = ?";
-//            connect = DatabaseConnection.getCon();
-//            prepare = connect.prepareStatement(query);
-//            prepare.setInt(1, prodData.getId());
-//            result = prepare.executeQuery();
-//
-//            if (result.next()) {
-//                byte[] imageBytes = result.getBytes("image");
-//                InputStream is = new ByteArrayInputStream(imageBytes);
-//                Image image = new Image(is, 100, 100, false, true);
-//                inventory_imageView.setImage(image);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-////        byte[] imageBytes = result.getBytes("image");
-////        InputStream is = new ByteArrayInputStream(imageBytes);
-////        Image image = new Image(is);
-////        image = new Image(path, 120, 127, false, true);
-//        inventory_imageView.setImage(image);
-//    }
 
 
     private String[] typeList = {"Meals", "Drinks"};
@@ -1291,7 +1525,14 @@ public class DasboardController implements Initializable{
         menuDisplayTotal();
         menuShowOrderData();
 
+        productDisplayCard();
+
         customersShowData();
+
+        userShowData();
+        userTypeList();
+
+
 
     }
 

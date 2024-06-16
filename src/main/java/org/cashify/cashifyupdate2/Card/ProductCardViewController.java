@@ -1,24 +1,20 @@
 package org.cashify.cashifyupdate2.Card;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.cashify.cashifyupdate2.ControllerAdmin.DasboardController;
-import org.cashify.cashifyupdate2.Product.ProductData;
 import org.cashify.cashifyupdate2.Product.ProductDao;
+import org.cashify.cashifyupdate2.Product.ProductData;
 
-public class ProductCardController implements Initializable {
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class ProductCardViewController implements Initializable {
 
     @FXML
     private AnchorPane card_form;
@@ -45,7 +41,7 @@ public class ProductCardController implements Initializable {
 
     private ProductDao productDao;
 
-    public ProductCardController() {
+    public ProductCardViewController() {
         productDao = new ProductDao();
     }
 
@@ -71,41 +67,8 @@ public class ProductCardController implements Initializable {
         }
     }
 
-    public void setQuantity() {
-        spin = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
-        prod_spinner.setValueFactory(spin);
-    }
-
-    public void addBtn() {
-        DasboardController mForm = new DasboardController();
-        mForm.customerID();
-
-        int qty = prod_spinner.getValue();
-
-        if (prodData != null && prodData.getProductId() != null) {
-            try {
-                productDao.addBtn(prodData, qty);
-                alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Added!");
-                alert.showAndWait();
-
-                mForm.menuGetTotal();
-            } catch (IllegalStateException e) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setQuantity();
+
     }
 }
