@@ -842,7 +842,7 @@ public class DasboardController implements Initializable{
             try {
                 statement = connect.createStatement();
                 result = statement.executeQuery(checkProdID);
-    
+
                 if (result.next()) {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
@@ -898,7 +898,6 @@ public class DasboardController implements Initializable{
     }
 
 
-
     public void inventoryUpdateBtn() {
         if (inventory_productID.getText().isEmpty()
                 || inventory_productName.getText().isEmpty()
@@ -906,94 +905,125 @@ public class DasboardController implements Initializable{
                 || inventory_stock.getText().isEmpty()
                 || inventory_price.getText().isEmpty()
                 || inventory_status.getSelectionModel().getSelectedItem() == null
-                || data.path == null || data.id == 0) {
+                || data.id == 0) {
 
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
             alert.setContentText("Please fill all blank fields");
             alert.showAndWait();
-            return;
-        }
+        } else {
+            String updateData = "UPDATE product SET "
+                    + "prod_id = ?, prod_name = ?, type = ?, stock = ?, price = ?, status = ?, image = ?, date = ? "
+                    + "WHERE id = ?";
 
-        String updateData = "UPDATE product SET prod_id = ?, prod_name = ?, type = ?, stock = ?, price = ?, status = ?, image = ?, date = ? WHERE id = ?";
-        connect = DatabaseConnection.getCon();
+            connect = DatabaseConnection.getCon();
 
-        try {
-            // Membaca gambar sebagai byte array
-            File imageFile = new File(data.path);
-            byte[] imageBytes = null;
-            if (imageFile.exists()) {
-                FileInputStream fis = new FileInputStream(imageFile);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                byte[] buf = new byte[1024];
-                int readNum;
-                while ((readNum = fis.read(buf)) != -1) {
-                    bos.write(buf, 0, readNum);
+            try {
+                // Convert image to byte array if a new image is provided
+                byte[] imageBytes = null;
+                if (data.path != null && !data.path.isEmpty()) {
+                    File imageFile = new File(data.path);
+
+                    if (!imageFile.exists()) {
+                        alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Image file does not exist");
+                        alert.showAndWait();
+                        return;
+                    }
+
+                    try (FileInputStream fis = new FileInputStream(imageFile);
+                         ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+
+                        byte[] buf = new byte[1024];
+                        int readNum;
+                        while ((readNum = fis.read(buf)) != -1) {
+                            bos.write(buf, 0, readNum);
+                        }
+                        imageBytes = bos.toByteArray();
+                    }
                 }
-                imageBytes = bos.toByteArray();
-                fis.close();
-                bos.close();
-            }
 
-            // Mendapatkan tanggal saat ini
-            Date date = new Date();
-            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-
-            alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to UPDATE Product ID: " + inventory_productID.getText() + "?");
-            Optional<ButtonType> option = alert.showAndWait();
-
-            if (option.isPresent() && option.get().equals(ButtonType.OK)) {
-                prepare = connect.prepareStatement(updateData);
-                prepare.setString(1, inventory_productID.getText());
-                prepare.setString(2, inventory_productName.getText());
-                prepare.setString(3, (String) inventory_type.getSelectionModel().getSelectedItem());
-                prepare.setInt(4, Integer.parseInt(inventory_stock.getText()));
-                prepare.setDouble(5, Double.parseDouble(inventory_price.getText()));
-                prepare.setString(6, (String) inventory_status.getSelectionModel().getSelectedItem());
-                if (imageBytes != null) {
-                    prepare.setBytes(7, imageBytes);
-                } else {
-                    prepare.setNull(7, java.sql.Types.BLOB);
-                }
-                prepare.setDate(8, sqlDate);
-                prepare.setInt(9, data.id);
-
-                prepare.executeUpdate();
-
-                alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Message");
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Successfully Updated!");
-                alert.showAndWait();
+                alert.setContentText("Are you sure you want to UPDATE Product ID: " + inventory_productID.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
 
-                // Update tabel dan bersihkan input
-                inventoryShowData();
-                inventoryClearBtn();
-            } else {
+                if (option.isPresent() && option.get().equals(ButtonType.OK)) {
+                    try (PreparedStatement prepare = connect.prepareStatement(updateData)) {
+                        prepare.setString(1, inventory_productID.getText());
+                        prepare.setString(2, inventory_productName.getText());
+                        prepare.setString(3, (String) inventory_type.getSelectionModel().getSelectedItem());
+                        prepare.setInt(4, Integer.parseInt(inventory_stock.getText()));
+                        prepare.setDouble(5, Double.parseDouble(inventory_price.getText()));
+                        prepare.setString(6, (String) inventory_status.getSelectionModel().getSelectedItem());
+
+                        if (imageBytes != null) {
+                            prepare.setBytes(7, imageBytes);
+                        } else {
+                            // Retrieve current image from database if no new image is provided
+                            String selectImage = "SELECT image FROM product WHERE id = ?";
+                            try (PreparedStatement selectPrepare = connect.prepareStatement(selectImage)) {
+                                selectPrepare.setInt(1, data.id);
+                                try (ResultSet resultSet = selectPrepare.executeQuery()) {
+                                    if (resultSet.next()) {
+                                        prepare.setBytes(7, resultSet.getBytes("image"));
+                                    } else {
+                                        alert = new Alert(Alert.AlertType.ERROR);
+                                        alert.setTitle("Error Message");
+                                        alert.setHeaderText(null);
+                                        alert.setContentText("Product not found");
+                                        alert.showAndWait();
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Get current date
+                        Date date = new Date();
+                        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                        prepare.setDate(8, sqlDate);
+
+                        prepare.setInt(9, data.id); // ID of the product to update
+
+                        prepare.executeUpdate();
+
+                        alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Successfully Updated!");
+                        alert.showAndWait();
+
+                        // Update table view
+                        inventoryShowData();
+                        // Clear input fields
+                        inventoryClearBtn();
+                    }
+                } else {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Update cancelled.");
+                    alert.showAndWait();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Update cancelled.");
+                alert.setContentText("Error updating product: " + e.getMessage());
                 alert.showAndWait();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Error updating product: " + e.getMessage());
-            alert.showAndWait();
         }
     }
 
 
-
     public void inventoryDeleteBtn() {
-        if (data.id == null || data.id == 0) {
+        if ( data.id == 0) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
@@ -1182,17 +1212,32 @@ public class DasboardController implements Initializable{
 //
 //        data.path = Arrays.toString(prodData.getImage());
 //
-//        String path = "File:" + prodData.getImage();
+////        String path = "File:" + prodData.getImage();
 //        data.date = String.valueOf(prodData.getDate());
 //        data.id = prodData.getId();
 //
-//        byte[] imageBytes = result.getBytes("image");
-//        InputStream is = new ByteArrayInputStream(imageBytes);
-//        Image image = new Image(is);
+//        try {
+//            String query = "SELECT image FROM product WHERE id = ?";
+//            connect = DatabaseConnection.getCon();
+//            prepare = connect.prepareStatement(query);
+//            prepare.setInt(1, prodData.getId());
+//            result = prepare.executeQuery();
+//
+//            if (result.next()) {
+//                byte[] imageBytes = result.getBytes("image");
+//                InputStream is = new ByteArrayInputStream(imageBytes);
+//                Image image = new Image(is, 100, 100, false, true);
+//                inventory_imageView.setImage(image);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+////        byte[] imageBytes = result.getBytes("image");
+////        InputStream is = new ByteArrayInputStream(imageBytes);
+////        Image image = new Image(is);
 ////        image = new Image(path, 120, 127, false, true);
 //        inventory_imageView.setImage(image);
 //    }
-
 
 
     private String[] typeList = {"Meals", "Drinks"};

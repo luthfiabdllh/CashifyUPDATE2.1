@@ -16,7 +16,7 @@ public class LoginApp extends Application {
 
             Parent root = loader.load();
 
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root);  
             primaryStage.setTitle("Login");
             primaryStage.setScene(scene);
             primaryStage.show();
