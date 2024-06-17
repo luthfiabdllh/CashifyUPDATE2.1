@@ -11,9 +11,10 @@ public class LoginDao implements LoginService {
     private Connection connect;
     private PreparedStatement prepare;
     private ResultSet result;
+
     @Override
     public Boolean login(LoginModel loginModel) {
-        String selectData = "SELECT username, password FROM users WHERE username = ? and password = ?";
+        String selectData = "SELECT username, password, role FROM users WHERE username = ? and password = ?";
         connect = DatabaseConnection.getCon();
 
         try {
@@ -21,15 +22,16 @@ public class LoginDao implements LoginService {
             prepare.setString(1, loginModel.getUsername());
             prepare.setString(2, loginModel.getPassword());
 
-
             result = prepare.executeQuery();
-            return result.next();
-
+            if (result.next()) {
+                loginModel.setRole(result.getString("role"));
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return false;
     }
-
 }
+

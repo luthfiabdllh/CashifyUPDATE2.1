@@ -2,6 +2,7 @@ package org.cashify.cashifyupdate2.Card;
 
 import org.cashify.cashifyupdate2.Database.DatabaseConnection;
 import org.cashify.cashifyupdate2.Database.data;
+import org.cashify.cashifyupdate2.Product.ProductData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

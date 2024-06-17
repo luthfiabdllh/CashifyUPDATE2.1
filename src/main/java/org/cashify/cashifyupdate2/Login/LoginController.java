@@ -43,8 +43,30 @@ public class LoginController {
                     alert.setContentText("Successfully Login!");
                     alert.showAndWait();
 
-                    // Load the main form
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/AdminGUI/Dashboard-AdminGUI.fxml"));
+                    // Load the appropriate dashboard based on the user role
+                    String role = loginModel.getRole();
+                    String fxmlFile = "";
+
+                    switch (role.toLowerCase()) {
+                        case "admin":
+                            fxmlFile = "/org/cashify/cashifyupdate2/AdminGUI/Dashboard-AdminGUI.fxml";
+                            break;
+                        case "employe":
+                            fxmlFile = "/org/cashify/cashifyupdate2/EmployeeGUI/EmployeeGUI.fxml";
+                            break;
+                        case "customer":
+                            fxmlFile = "/org/cashify/cashifyupdate2/CustomerGUI/CustomerGUI.fxml";
+                            break;
+                        default:
+                            alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error Message");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Invalid role");
+                            alert.showAndWait();
+                            return;
+                    }
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
                     Parent root = loader.load();
                     Stage stage = new Stage();
                     Scene scene = new Scene(root);
@@ -57,7 +79,6 @@ public class LoginController {
 
                     // Hide the current login window
                     si_loginBtn.getScene().getWindow().hide();
-
                 } else {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
@@ -69,7 +90,6 @@ public class LoginController {
                 throw new RuntimeException(e);
             }
         }
-
     }
-
 }
+
