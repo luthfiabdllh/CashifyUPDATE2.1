@@ -51,7 +51,7 @@ public class LoginController {
                         case "admin":
                             fxmlFile = "/org/cashify/cashifyupdate2/AdminGUI/Dashboard-AdminGUI.fxml";
                             break;
-                        case "employe":
+                        case "employee":
                             fxmlFile = "/org/cashify/cashifyupdate2/EmployeeGUI/EmployeeGUI.fxml";
                             break;
                         case "customer":
@@ -71,7 +71,7 @@ public class LoginController {
                     Stage stage = new Stage();
                     Scene scene = new Scene(root);
 
-                    stage.setTitle("Cafe Shop Management System");
+                    stage.setTitle("Cashify");
                     stage.setMinWidth(1280);
                     stage.setMinHeight(720);
                     stage.setScene(scene);
