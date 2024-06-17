@@ -958,8 +958,8 @@ public class DasboardController implements Initializable{
             map.put("getReceipt", (cID - 1));
 
             try {
-
-                JasperDesign jDesign = JRXmlLoader.load("E:\\UAS\\CashifyUPDATE2.0\\src\\main\\resources\\org\\cashify\\cashifyupdate2\\receipt\\report.jrxml");
+                InputStream inputStreams = getClass().getResourceAsStream("/org/cashify/cashifyupdate2/receipt/report.jrxml");
+                JasperDesign jDesign = JRXmlLoader.load(inputStreams);
                 JasperReport jReport = JasperCompileManager.compileReport(jDesign);
                 JasperPrint jPrint = JasperFillManager.fillReport(jReport, map, connect);
 

@@ -256,8 +256,8 @@
                                     <ComboBox fx:id="inventory_status" layoutX="321.0" layoutY="114.0" prefHeight="30.0" prefWidth="250.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="325.0" />
                                     <ImageView fx:id="inventory_imageView" fitHeight="120.0" fitWidth="120.0" layoutX="633.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="51.200000000000074" AnchorPane.leftAnchor="633.0" AnchorPane.rightAnchor="272.0" AnchorPane.topAnchor="34.0" />
                                     <Label layoutX="640.0" layoutY="12.0" styleClass="heading3" text="Product Image" />
-                                    <Button fx:id="inventory_clearBtn" layoutX="779.0" layoutY="9.0" minWidth="25.0" mnemonicParsing="false" onAction="#inventoryClearBtn" prefHeight="25.0" prefWidth="25.0" styleClass="btn-remove" />
-                                    <Button fx:id="inventory_deleteBtn1" layoutX="771.0" layoutY="4.0" mnemonicParsing="false" onAction="#inventoryDeleteBtn" styleClass="btn-remove" text="Reset" />
+                                    <Button fx:id="inventory_carBtn" layoutX="779.0" layoutY="9.0" minWidth="25.0" mnemonicParsing="false" onAction="#inventoryClearBtn" prefHeight="25.0" prefWidth="25.0" styleClass="btn-remove" />
+                                    <Button fx:id="inventory_clearBtn" layoutX="771.0" layoutY="4.0" mnemonicParsing="false" onAction="#inventoryClearBtn" styleClass="btn-remove" text="Reset" />
                                  </children>
                               </AnchorPane>
                            </children>
