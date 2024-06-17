@@ -1515,7 +1515,7 @@ public class DasboardController implements Initializable{
     }
 
 
-    private String[] typeList = {"Meals", "Drinks"};
+    private String[] typeList = {"Makanan", "Minuman", "Obat", "Sabun", "Peralatan Rumah Tangga", "Elektronik"};
 
     public void inventoryTypeList() {
 
