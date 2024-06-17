@@ -1,4 +1,4 @@
-package org.cashify.cashifyupdate2.Product;
+package org.cashify.cashifyupdate2.Card;
 
 import org.cashify.cashifyupdate2.Database.DatabaseConnection;
 import org.cashify.cashifyupdate2.Database.data;
@@ -9,10 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-public class ProductDao implements ProductService {
+public class cardDao implements cardService {
     private Connection connect;
 
-    public ProductDao() {
+    public cardDao() {
         connect = DatabaseConnection.getCon();
     }
 

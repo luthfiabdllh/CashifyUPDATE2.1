@@ -44,7 +44,7 @@ public class LoginController {
                     alert.showAndWait();
 
                     // Load the main form
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Dashboard-AdminGUI.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/AdminGUI/Dashboard-AdminGUI.fxml"));
                     Parent root = loader.load();
                     Stage stage = new Stage();
                     Scene scene = new Scene(root);

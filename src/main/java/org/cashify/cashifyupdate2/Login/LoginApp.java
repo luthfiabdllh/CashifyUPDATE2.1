@@ -12,7 +12,7 @@ public class LoginApp extends Application {
     public void start(Stage primaryStage) {
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Login/LogIn.fxml"));
 
             Parent root = loader.load();
 

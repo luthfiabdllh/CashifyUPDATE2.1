@@ -30,4 +30,8 @@ module org.cashify.cashifyupdate2 {
     exports org.cashify.cashifyupdate2.Card;
     opens org.cashify.cashifyupdate2.Customer to javafx.base;
     opens org.cashify.cashifyupdate2.Users to javafx.base;
+    opens org.cashify.cashifyupdate2.ControllerCustomer;
+    exports org.cashify.cashifyupdate2.ControllerCustomer;
+    opens org.cashify.cashifyupdate2.ControllerEmployee;
+    exports org.cashify.cashifyupdate2.ControllerEmployee;
 }

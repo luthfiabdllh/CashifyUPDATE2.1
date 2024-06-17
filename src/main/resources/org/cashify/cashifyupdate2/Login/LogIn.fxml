@@ -9,13 +9,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" styleClass="login" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cashify.cashifyupdate2.Login.LoginController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" styleClass="login" stylesheets="@../Styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cashify.cashifyupdate2.Login.LoginController">
    <children>
       <AnchorPane layoutX="227.0" layoutY="101.0" prefHeight="398.0" prefWidth="346.0" styleClass="login-shape">
          <children>
             <ImageView fitHeight="40.0" fitWidth="123.0" layoutX="112.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@Assets/logo-text.png" />
+                  <Image url="@../Assets/logo-text.png" />
                </image>
             </ImageView>
             <TextField fx:id="si_username" onAction="#loginBtn" layoutX="32.0" layoutY="185.0" prefHeight="40.0" prefWidth="283.0" promptText="Username" styleClass="field" />

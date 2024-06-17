@@ -21,6 +21,7 @@ public class LoginDao implements LoginService {
             prepare.setString(1, loginModel.getUsername());
             prepare.setString(2, loginModel.getPassword());
 
+
             result = prepare.executeQuery();
             return result.next();
 
@@ -30,4 +31,5 @@ public class LoginDao implements LoginService {
 
         return false;
     }
+
 }

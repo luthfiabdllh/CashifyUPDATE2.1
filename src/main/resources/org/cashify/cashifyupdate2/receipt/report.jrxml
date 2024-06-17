@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="226" pageHeight="425" columnWidth="186" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9f72c498-f2cd-4557-bdc6-daf7a8f2e2c9">
 	<property name="ireport.zoom" value="2.5937424601000023"/>
 	<property name="ireport.x" value="0"/>
@@ -72,25 +73,32 @@ WHERE
 	<title>
 		<band height="58" splitType="Stretch">
 			<staticText>
-				<reportElement x="47" y="21" width="100" height="20" uuid="389f7957-817f-4fbb-81a9-de1e300008c2"/>
-				<textElement textAlignment="Center">
+				<reportElement x="0" y="0" width="80" height="20" uuid="389f7957-817f-4fbb-81a9-de1e300008c2"/>
+				<textElement textAlignment="Left">
 					<font fontName="Comic Sans MS" isBold="true"/>
 				</textElement>
-				<text><![CDATA[MarcoMan's Cafe Shop]]></text>
+				<text><![CDATA[Cashify Retail]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="112" y="0" width="45" height="9" uuid="68b441f6-5573-4b73-b5fe-a57a66ff218a"/>
-				<textElement textAlignment="Right">
-					<font size="6" isBold="true"/>
+				<reportElement x="0" y="19" width="27" height="10" uuid="68b441f6-5573-4b73-b5fe-a57a66ff218a"/>
+				<textElement textAlignment="Left">
+					<font size="4" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Customer ID:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="157" y="0" width="29" height="9" uuid="365e46b0-02c9-4d80-87c6-0967b1e0e8b4"/>
+				<reportElement x="27" y="19" width="29" height="9" uuid="365e46b0-02c9-4d80-87c6-0967b1e0e8b4"/>
 				<textElement>
-					<font size="6"/>
+					<font size="4"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{customer_id}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="0" y="26" width="36" height="7" uuid="d4107b8f-b96f-45d7-b54e-b889ec32c5f2"/>
+				<textElement textAlignment="Right">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -189,13 +197,6 @@ WHERE
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Thank you for your Order!!]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy h.mm a">
-				<reportElement x="86" y="43" width="100" height="10" uuid="d4107b8f-b96f-45d7-b54e-b889ec32c5f2"/>
-				<textElement textAlignment="Right">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
 		</band>
 	</pageFooter>
 	<summary>

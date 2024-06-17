@@ -30,7 +30,7 @@ public class SideController {
 
     public void dashboardButton() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/Dashboard-AdminGUI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/cashify/cashifyupdate2/AdminGUI/Dashboard-AdminGUI.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             Scene scene = new Scene(root);
@@ -139,7 +139,7 @@ public class SideController {
                 logoutButton.getScene().getWindow().hide();
 
                 // LINK YOUR LOGIN FORM AND SHOW IT
-                Parent root = FXMLLoader.load(getClass().getResource("/org/cashify/cashifyupdate2/Login.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/org/cashify/cashifyupdate2/Login/LogIn.fxml"));
 
                 Stage stage = new Stage();
                 Scene scene = new Scene(root);

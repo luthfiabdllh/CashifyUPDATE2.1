@@ -25,8 +25,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.design.*;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import org.cashify.cashifyupdate2.Card.ProductCardController;
@@ -78,23 +76,18 @@ public class DasboardController implements Initializable{
     @FXML
     private Label username;
 
-
-
-
     //  Alert
     private Alert alert;
     //  Conection
-    private Connection connect;
-    private PreparedStatement prepare;
-    private Statement statement;
-    private ResultSet result;
+    protected Connection connect;
+    protected PreparedStatement prepare;
+    protected Statement statement;
+    protected ResultSet result;
     //  Image
     private Image image;
     //  List
     private ObservableList<ProductData> cardListData = FXCollections.observableArrayList();
-    //  Report
-    //    @FXML
-    //    private AnchorPane dashboard_form;
+
     @FXML
     private Label dashboard_NC;
     @FXML
@@ -237,19 +230,19 @@ public class DasboardController implements Initializable{
 
             try {
                 FXMLLoader load = new FXMLLoader();
-                load.setLocation(getClass().getResource("/org/cashify/cashifyupdate2/CardProductView.fxml"));
+                load.setLocation(getClass().getResource("/org/cashify/cashifyupdate2/Card/CardProductView.fxml"));
                 AnchorPane panel = load.load();
                 ProductCardViewController cardv = load.getController();
                 cardv.setData(cardListData.get(q));
 
-                if (column == 3) {
+                if (column == 5) {
                     column = 0;
                     row += 1;
                 }
 
                 product_gridPane.add(panel, column++, row);
 
-                GridPane.setMargin(panel, new Insets(10));
+                GridPane.setMargin(panel, new Insets(3));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -595,7 +588,7 @@ public class DasboardController implements Initializable{
                 ti = result.getDouble("SUM(total)");
             }
 
-            dashboard_TI.setText("$" + ti);
+            dashboard_TI.setText("Rp. " + ti);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -615,7 +608,7 @@ public class DasboardController implements Initializable{
             if (result.next()) {
                 ti = result.getFloat("SUM(total)");
             }
-            dashboard_TotalI.setText("$" + ti);
+            dashboard_TotalI.setText("Rp. " + ti);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -733,7 +726,7 @@ public class DasboardController implements Initializable{
 
             try {
                 FXMLLoader load = new FXMLLoader();
-                load.setLocation(getClass().getResource("/org/cashify/cashifyupdate2/CardProduct.fxml"));
+                load.setLocation(getClass().getResource("/org/cashify/cashifyupdate2/Card/CardProduct.fxml"));
                 AnchorPane pane = load.load();
                 ProductCardController cardC = load.getController();
                 cardC.setData(cardListData.get(q));
@@ -745,7 +738,7 @@ public class DasboardController implements Initializable{
 
                 menu_gridPane.add(pane, column++, row);
 
-                GridPane.setMargin(pane, new Insets(10));
+                GridPane.setMargin(pane, new Insets(5));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -966,7 +959,7 @@ public class DasboardController implements Initializable{
 
             try {
 
-                JasperDesign jDesign = JRXmlLoader.load("E:\\UAS\\CashifyUPDATE2.0\\src\\main\\resources\\org\\cashify\\cashifyupdate2\\report.jrxml");
+                JasperDesign jDesign = JRXmlLoader.load("E:\\UAS\\CashifyUPDATE2.0\\src\\main\\resources\\org\\cashify\\cashifyupdate2\\receipt\\report.jrxml");
                 JasperReport jReport = JasperCompileManager.compileReport(jDesign);
                 JasperPrint jPrint = JasperFillManager.fillReport(jReport, map, connect);
 
@@ -1069,7 +1062,7 @@ public class DasboardController implements Initializable{
 
             if (option.get().equals(ButtonType.OK)) {
                 logoutButton.getScene().getWindow().hide();
-                Parent root = FXMLLoader.load(getClass().getResource("/org/cashify/cashifyupdate2/LogIn.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/org/cashify/cashifyupdate2/Login/LogIn.fxml"));
                 Stage stage = new Stage();
                 Scene scene = new Scene(root);
                 stage.setTitle("Cafe Shop Management System");
@@ -1226,74 +1219,130 @@ public class DasboardController implements Initializable{
         }
     }
 
-
-
     public void inventoryUpdateBtn() {
-
         if (inventory_productID.getText().isEmpty()
                 || inventory_productName.getText().isEmpty()
                 || inventory_type.getSelectionModel().getSelectedItem() == null
                 || inventory_stock.getText().isEmpty()
                 || inventory_price.getText().isEmpty()
                 || inventory_status.getSelectionModel().getSelectedItem() == null
-                || data.path == null || data.id == 0) {
+                || data.id == 0) {
 
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
             alert.setContentText("Please fill all blank fields");
             alert.showAndWait();
-
         } else {
-            String path = data.path;
-            path = path.replace("\\", "\\\\");
-
             String updateData = "UPDATE product SET "
-                    + "prod_id = '" + inventory_productID.getText() + "', prod_name = '"
-                    + inventory_productName.getText() + "', type = '"
-                    + inventory_type.getSelectionModel().getSelectedItem() + "', stock = '"
-                    + inventory_stock.getText() + "', price = '"
-                    + inventory_price.getText() + "', status = '"
-                    + inventory_status.getSelectionModel().getSelectedItem() + "', image = '"
-                    + path + "', date = '"
-                    + data.date + "' WHERE id = " + data.id;
+                    + "prod_id = ?, prod_name = ?, type = ?, stock = ?, price = ?, status = ?, image = ?, date = ? "
+                    + "WHERE id = ?";
 
             connect = DatabaseConnection.getCon();
 
             try {
+                // Convert image to byte array if a new image is provided
+                byte[] imageBytes = null;
+                if (data.path != null && !data.path.isEmpty()) {
+                    File imageFile = new File(data.path);
+
+                    if (!imageFile.exists()) {
+                        alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Image file does not exist");
+                        alert.showAndWait();
+                        return;
+                    }
+
+                    try (FileInputStream fis = new FileInputStream(imageFile);
+                         ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+
+                        byte[] buf = new byte[1024];
+                        int readNum;
+                        while ((readNum = fis.read(buf)) != -1) {
+                            bos.write(buf, 0, readNum);
+                        }
+                        imageBytes = bos.toByteArray();
+                    }
+                }
 
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Error Message");
+                alert.setTitle("Confirmation Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Are you sure you want to UPDATE PRoduct ID: " + inventory_productID.getText() + "?");
+                alert.setContentText("Are you sure you want to UPDATE Product ID: " + inventory_productID.getText() + "?");
                 Optional<ButtonType> option = alert.showAndWait();
 
-                if (option.get().equals(ButtonType.OK)) {
-                    prepare = connect.prepareStatement(updateData);
-                    prepare.executeUpdate();
+                if (option.isPresent() && option.get().equals(ButtonType.OK)) {
+                    try (PreparedStatement prepare = connect.prepareStatement(updateData)) {
+                        prepare.setString(1, inventory_productID.getText());
+                        prepare.setString(2, inventory_productName.getText());
+                        prepare.setString(3, (String) inventory_type.getSelectionModel().getSelectedItem());
+                        prepare.setInt(4, Integer.parseInt(inventory_stock.getText()));
+                        prepare.setDouble(5, Double.parseDouble(inventory_price.getText()));
+                        prepare.setString(6, (String) inventory_status.getSelectionModel().getSelectedItem());
 
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Successfully Updated!");
-                    alert.showAndWait();
+                        if (imageBytes != null) {
+                            prepare.setBytes(7, imageBytes);
+                        } else {
+                            // Retrieve current image from database if no new image is provided
+                            String selectImage = "SELECT image FROM product WHERE id = ?";
+                            try (PreparedStatement selectPrepare = connect.prepareStatement(selectImage)) {
+                                selectPrepare.setInt(1, data.id);
+                                try (ResultSet resultSet = selectPrepare.executeQuery()) {
+                                    if (resultSet.next()) {
+                                        prepare.setBytes(7, resultSet.getBytes("image"));
+                                    } else {
+                                        alert = new Alert(Alert.AlertType.ERROR);
+                                        alert.setTitle("Error Message");
+                                        alert.setHeaderText(null);
+                                        alert.setContentText("Product not found");
+                                        alert.showAndWait();
+                                        return;
+                                    }
+                                }
+                            }
+                        }
 
-                    // TO UPDATE YOUR TABLE VIEW
-                    inventoryShowData();
-                    // TO CLEAR YOUR FIELDS
-                    inventoryClearBtn();
+                        // Get current date
+                        Date date = new Date();
+                        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                        prepare.setDate(8, sqlDate);
+
+                        prepare.setInt(9, data.id); // ID of the product to update
+
+                        prepare.executeUpdate();
+
+                        alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Successfully Updated!");
+                        alert.showAndWait();
+
+                        // Update table view
+                        inventoryShowData();
+                        // Clear input fields
+                        inventoryClearBtn();
+                    }
                 } else {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText(null);
-                    alert.setContentText("Cancelled.");
+                    alert.setContentText("Update cancelled.");
                     alert.showAndWait();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Error updating product: " + e.getMessage());
+                alert.showAndWait();
             }
         }
     }
+
+
 
     public void inventoryDeleteBtn() {
         if (data.id == 0) {
@@ -1429,16 +1478,11 @@ public class DasboardController implements Initializable{
         inventory_tableView.setItems(inventoryListData);
     }
 
-
     public void inventorySelectData() {
         ProductData prodData = inventory_tableView.getSelectionModel().getSelectedItem();
         int num = inventory_tableView.getSelectionModel().getSelectedIndex();
 
-        if ((num - 1) < -1) {
-            return;
-        }
-
-        if (prodData == null || prodData.getId() == null) {
+        if (num < 0 || prodData == null || prodData.getId() == null) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
@@ -1452,21 +1496,18 @@ public class DasboardController implements Initializable{
         inventory_stock.setText(String.valueOf(prodData.getStock()));
         inventory_price.setText(String.valueOf(prodData.getPrice()));
 
-        data.date = String.valueOf(prodData.getDate());
         data.id = prodData.getId();
 
         try {
-            String query = "SELECT image FROM product WHERE id = ?";
-            connect = DatabaseConnection.getCon();
-            prepare = connect.prepareStatement(query);
-            prepare.setInt(1, prodData.getId());
-            result = prepare.executeQuery();
-
-            if (result.next()) {
-                byte[] imageBytes = result.getBytes("image");
+            // Menampilkan gambar dari byte array
+            byte[] imageBytes = prodData.getImage();
+            if (imageBytes != null && imageBytes.length > 0) {
                 InputStream is = new ByteArrayInputStream(imageBytes);
-                Image image = new Image(is);
+                Image image = new Image(is, 100, 100, false, true);
                 inventory_imageView.setImage(image);
+            } else {
+                // Jika gambar tidak ada, kosongkan ImageView
+                inventory_imageView.setImage(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
