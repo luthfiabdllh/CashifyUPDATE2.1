@@ -746,6 +746,11 @@ public class DasboardController implements Initializable{
         }
     }
 
+    public void refresh() {
+        menuShowOrderData();
+        menuDisplayTotal();
+    }
+
     public ObservableList<ProductData> menuGetOrder() {
         customerID();
         ObservableList<ProductData> listData = FXCollections.observableArrayList();
@@ -1050,6 +1055,7 @@ public class DasboardController implements Initializable{
         username.setText(user);
 
     }
+
 
 
     public void logout() {
